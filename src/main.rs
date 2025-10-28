@@ -1,14 +1,16 @@
-const MAP_SIZE_X: usize = 5;
+const MAP_SIZE_X: usize = 10;
 const MAP_SIZE_Y: usize = ((MAP_SIZE_X) as f64 /2.0).ceil() as usize;
 
 fn main() {
     let mut earth = Planet {
         map: [
-            ".....",
-            ".....",
-            ".....",
+            "..........",
+            "..........",
+            "..........",
+            "..........",
+            "..........",
         ],
-        player_coords: Coords {x: 2, y: 1},
+        player_coords: Coords {x: 4, y: 2},
         player_sprite: "ඞ",
     };
     earth.game_loop();
@@ -25,6 +27,7 @@ enum Movement {
     Down,
     Left,
     Right,
+    Quit,
     Invalid
 }
 
@@ -60,6 +63,7 @@ impl Planet {
             "a"  => if self.is_valid_movement(&self.player_coords, Movement::Left) { Movement::Left } else { Movement::Invalid },
             "s"  => if self.is_valid_movement(&self.player_coords, Movement::Down) { Movement::Down } else { Movement::Invalid },
             "d"  => if self.is_valid_movement(&self.player_coords, Movement::Right) { Movement::Right } else { Movement::Invalid },
+            "q"  => Movement::Quit,
             _other => Movement::Invalid
         }
     }
@@ -70,7 +74,7 @@ impl Planet {
             Movement::Left => self.player_coords.x = self.player_coords.x - 1,
             Movement::Down => self.player_coords.y = self.player_coords.y + 1,
             Movement::Right => self.player_coords.x = self.player_coords.x + 1,
-            Movement::Invalid => panic!("Wrong movement in move_player!"),
+            _other => panic!("Wrong movement in move_player!"),
         }
     }
 
@@ -80,7 +84,7 @@ impl Planet {
             Movement::Left => coords.x - 1 >= 0,
             Movement::Down => coords.y + 1 < MAP_SIZE_Y as i32,
             Movement::Right => coords.x + 1 < MAP_SIZE_X as i32, 
-            Movement::Invalid => panic!("Invalid movement sent to is_valid_movement"), 
+            _other => panic!("Invalid movement sent to is_valid_movement"), 
         }
     }
 
@@ -89,6 +93,7 @@ impl Planet {
         loop {
             let input = get_input();
             let movement = self.check_input(&input);
+            if movement == Movement::Quit { break; }
             if movement != Movement::Invalid { 
                 self.move_player(movement);
                 self.print_map();
@@ -119,5 +124,6 @@ fn get_input() -> String {
 }
 
 fn clear_screen() {
-    clearscreen::clear().expect("Failed to clear screen");
+    print!("\x1B[2J"); // Temporal solution, clearscreen resets my terminal colors
+    //clearscreen::clear().expect("Failed to clear screen");
 }
