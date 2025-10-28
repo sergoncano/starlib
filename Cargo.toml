@@ -1,0 +1,8 @@
+[package]
+name = "rusting-stars"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clearscreen = "4.0.2"
+termios = "0.3.3"
