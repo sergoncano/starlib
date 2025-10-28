@@ -3,6 +3,7 @@ const MAP_SIZE_Y: usize = ((MAP_SIZE_X) as f64 /2.0).ceil() as usize;
 
 fn main() {
     let mut earth = Planet {
+        name: "Earth",
         map: [
             "..........",
             "..........",
@@ -32,6 +33,7 @@ enum Movement {
 }
 
 struct Planet {
+    name: &'static str,
     map: [&'static str; MAP_SIZE_Y],
     player_coords: Coords,
     player_sprite: &'static str,
@@ -40,6 +42,7 @@ struct Planet {
 impl Planet {
     fn print_map(&self) {
         clear_screen();
+        self.print_name();
         let mut y: i32 = 0; 
         for line in self.map {
             let mut x: i32 = 0; 
@@ -54,6 +57,19 @@ impl Planet {
             println!("");
             y += 1;
         }
+    }
+
+    fn print_name(&self) {
+        if self.name.len() > MAP_SIZE_X { return; }
+        let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 /2.0;
+        for i in 0..(dashes.floor() as i32) {
+            print!("-");
+        }
+        print!("{}", self.name);
+        for i in 0..(dashes.ceil() as i32) {
+            print!("-");
+        }
+        println!("");
     }
 
     fn check_input(&self, input: &String) -> Movement {
