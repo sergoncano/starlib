@@ -2,6 +2,7 @@ const MAP_SIZE_X: usize = 10;
 const MAP_SIZE_Y: usize = ((MAP_SIZE_X) as f64 /2.0).ceil() as usize;
 
 fn main() {
+    setup_terminal_properties();
     let mut earth = Planet {
         name: "Earth",
         map: [
@@ -15,6 +16,21 @@ fn main() {
         player_sprite: "ඞ",
     };
     game_loop(&mut earth);
+}
+
+fn setup_terminal_properties() {
+    use crossterm::{cursor, ExecutableCommand};
+    use std::io::stdout;
+    let mut stdout = stdout();
+    let _ = stdout.execute(cursor::Hide); // If cursor is showing check this error
+
+    //Make input letters invisible
+    use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
+    let stdin = 0;
+    let termios = Termios::from_fd(stdin).unwrap();
+    let mut new_termios = termios.clone(); 
+    new_termios.c_lflag &= !(ICANON | ECHO);
+    tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
 }
 
 fn game_loop(planet: &mut Planet) {
@@ -125,18 +141,11 @@ impl Planet {
 
 fn get_input() -> String {
     use std::{io, io::{Read, Write}};
-    use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
-    let stdin = 0;
-    let termios = Termios::from_fd(stdin).unwrap();
-    let mut new_termios = termios.clone(); 
-    new_termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
     let stdout = io::stdout();
     let mut reader = io::stdin();
     let mut buffer = [0;1]; 
     stdout.lock().flush().unwrap();
     reader.read_exact(&mut buffer).unwrap();
-    tcsetattr(stdin, TCSANOW, & termios).unwrap(); 
     let result = String::from_utf8(buffer.to_vec());
     match result {
         Ok(string) => string,
