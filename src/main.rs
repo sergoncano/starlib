@@ -14,7 +14,23 @@ fn main() {
         player_coords: Coords {x: 4, y: 2},
         player_sprite: "ඞ",
     };
-    earth.game_loop();
+    game_loop(&mut earth);
+}
+
+fn game_loop(planet: &mut Planet) {
+    print!("{}", planet.generate_banner());
+    print!("{}", planet.generate_map());
+    loop {
+        let input = get_input();
+        let movement = planet.check_input(&input);
+        if movement == Movement::Quit { break; }
+        if movement != Movement::Invalid { 
+            planet.move_player(movement);
+            clear_screen();
+            print!("{}", planet.generate_banner());
+            print!("{}", planet.generate_map());
+        }
+    }
 }
 
 struct Coords {
@@ -40,36 +56,38 @@ struct Planet {
 }
 
 impl Planet {
-    fn print_map(&self) {
-        clear_screen();
-        self.print_name();
+    fn generate_map(&self) -> String {
+        let mut map_str = String::from("");
         let mut y: i32 = 0; 
         for line in self.map {
             let mut x: i32 = 0; 
             for character in line.chars() {
                 if x==self.player_coords.x && y==self.player_coords.y  {
-                    print!("{}", self.player_sprite);
+                    map_str.push_str(self.player_sprite);
                 } else {
-                    print!("{}", character);
+                    map_str.push(character);
                 }
                 x += 1;
             }
-            println!("");
+            map_str.push_str("\n");
             y += 1;
         }
+        return map_str;
     }
 
-    fn print_name(&self) {
-        if self.name.len() > MAP_SIZE_X { return; }
+    fn generate_banner(&self) -> String {
+        let mut banner = String::from("");
+        if self.name.len() > MAP_SIZE_X { return String::from(""); }
         let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 /2.0;
-        for i in 0..(dashes.floor() as i32) {
-            print!("-");
+        for _i in 0..(dashes.floor() as i32) {
+            banner.push_str("-");
         }
-        print!("{}", self.name);
-        for i in 0..(dashes.ceil() as i32) {
-            print!("-");
+        banner.push_str(self.name);
+        for _i in 0..(dashes.ceil() as i32) {
+            banner.push_str("-");
         }
-        println!("");
+        banner.push_str("\n");
+        return banner;
     }
 
     fn check_input(&self, input: &String) -> Movement {
@@ -101,19 +119,6 @@ impl Planet {
             Movement::Down => coords.y + 1 < MAP_SIZE_Y as i32,
             Movement::Right => coords.x + 1 < MAP_SIZE_X as i32, 
             _other => panic!("Invalid movement sent to is_valid_movement"), 
-        }
-    }
-
-    fn game_loop(&mut self) {
-        self.print_map();
-        loop {
-            let input = get_input();
-            let movement = self.check_input(&input);
-            if movement == Movement::Quit { break; }
-            if movement != Movement::Invalid { 
-                self.move_player(movement);
-                self.print_map();
-            }
         }
     }
 }
