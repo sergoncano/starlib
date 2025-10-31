@@ -19,9 +19,10 @@ fn main() {
 }
 
 fn setup_terminal_properties() {
-    use crossterm::{cursor, ExecutableCommand};
+    use crossterm::{cursor, ExecutableCommand, terminal::EnterAlternateScreen, execute};
     use std::io::stdout;
     let mut stdout = stdout();
+    let _ = execute!(stdout, EnterAlternateScreen);
     let _ = stdout.execute(cursor::Hide); // If cursor is showing check this error
 
     //Make input letters invisible
@@ -33,13 +34,23 @@ fn setup_terminal_properties() {
     tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
 }
 
+fn restore_terminal_properties() {
+    use crossterm::{terminal::LeaveAlternateScreen, execute};
+    use std::io::stdout;
+    let mut stdout = stdout();
+    let _ = execute!(stdout, LeaveAlternateScreen);
+}
+
 fn game_loop(planet: &mut Planet) {
     print!("{}", planet.generate_banner());
     print!("{}", planet.generate_map());
     loop {
         let input = get_input();
         let movement = planet.check_input(&input);
-        if movement == Movement::Quit { break; }
+        if movement == Movement::Quit {
+            restore_terminal_properties();
+            std::process::exit(0);
+        }
         if movement != Movement::Invalid { 
             planet.move_player(movement);
             clear_screen();
