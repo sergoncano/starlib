@@ -1,9 +1,6 @@
-const MAP_SIZE_X: usize = 10;
-const MAP_SIZE_Y: usize = ((MAP_SIZE_X) as f64 /2.0).ceil() as usize;
-
 fn main() {
     setup_terminal_properties();
-    let mut earth = Planet {
+    let mut earth = Planet::<10, 5> {
         name: "Earth",
         map: [
             "..........",
@@ -12,36 +9,38 @@ fn main() {
             "..........",
             "..........",
         ],
-        player_coords: Coords {x: 4, y: 2},
+        player_coords: Coords { x: 4, y: 2 },
         player_sprite: "ඞ",
     };
     game_loop(&mut earth);
 }
 
 fn setup_terminal_properties() {
-    use crossterm::{cursor, ExecutableCommand, terminal::EnterAlternateScreen, execute};
+    use crossterm::{ExecutableCommand, cursor, execute, terminal::EnterAlternateScreen};
     use std::io::stdout;
     let mut stdout = stdout();
     let _ = execute!(stdout, EnterAlternateScreen);
     let _ = stdout.execute(cursor::Hide); // If cursor is showing check this error
 
     //Make input letters invisible
-    use termios::{Termios, TCSANOW, ECHO, ICANON, tcsetattr};
+    use termios::{ECHO, ICANON, TCSANOW, Termios, tcsetattr};
     let stdin = 0;
     let termios = Termios::from_fd(stdin).unwrap();
-    let mut new_termios = termios.clone(); 
+    let mut new_termios = termios.clone();
     new_termios.c_lflag &= !(ICANON | ECHO);
     tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
 }
 
 fn restore_terminal_properties() {
-    use crossterm::{terminal::LeaveAlternateScreen, execute};
+    use crossterm::{execute, terminal::LeaveAlternateScreen};
     use std::io::stdout;
     let mut stdout = stdout();
     let _ = execute!(stdout, LeaveAlternateScreen);
 }
 
-fn game_loop(planet: &mut Planet) {
+fn game_loop<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize>(
+    planet: &mut Planet<MAP_SIZE_X, MAP_SIZE_Y>,
+) {
     print!("{}", planet.generate_banner());
     print!("{}", planet.generate_map());
     loop {
@@ -51,7 +50,7 @@ fn game_loop(planet: &mut Planet) {
             restore_terminal_properties();
             std::process::exit(0);
         }
-        if movement != Movement::Invalid { 
+        if movement != Movement::Invalid {
             planet.move_player(movement);
             clear_screen();
             print!("{}", planet.generate_banner());
@@ -72,24 +71,24 @@ enum Movement {
     Left,
     Right,
     Quit,
-    Invalid
+    Invalid,
 }
 
-struct Planet {
+struct Planet<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> {
     name: &'static str,
     map: [&'static str; MAP_SIZE_Y],
     player_coords: Coords,
     player_sprite: &'static str,
 }
 
-impl Planet {
+impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
     fn generate_map(&self) -> String {
         let mut map_str = String::from("");
-        let mut y: i32 = 0; 
+        let mut y: i32 = 0;
         for line in self.map {
-            let mut x: i32 = 0; 
+            let mut x: i32 = 0;
             for character in line.chars() {
-                if x==self.player_coords.x && y==self.player_coords.y  {
+                if x == self.player_coords.x && y == self.player_coords.y {
                     map_str.push_str(self.player_sprite);
                 } else {
                     map_str.push(character);
@@ -104,8 +103,10 @@ impl Planet {
 
     fn generate_banner(&self) -> String {
         let mut banner = String::from("");
-        if self.name.len() > MAP_SIZE_X { return String::from(""); }
-        let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 /2.0;
+        if self.name.len() > MAP_SIZE_X {
+            return String::from("");
+        }
+        let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 / 2.0;
         for _i in 0..(dashes.floor() as i32) {
             banner.push_str("-");
         }
@@ -120,12 +121,36 @@ impl Planet {
     fn check_input(&self, input: &String) -> Movement {
         let input_data = &input[..];
         match input_data {
-            "w"  => if self.is_valid_movement(&self.player_coords, Movement::Up) { Movement::Up } else { Movement::Invalid },
-            "a"  => if self.is_valid_movement(&self.player_coords, Movement::Left) { Movement::Left } else { Movement::Invalid },
-            "s"  => if self.is_valid_movement(&self.player_coords, Movement::Down) { Movement::Down } else { Movement::Invalid },
-            "d"  => if self.is_valid_movement(&self.player_coords, Movement::Right) { Movement::Right } else { Movement::Invalid },
-            "q"  => Movement::Quit,
-            _other => Movement::Invalid
+            "w" => {
+                if self.is_valid_movement(&self.player_coords, Movement::Up) {
+                    Movement::Up
+                } else {
+                    Movement::Invalid
+                }
+            }
+            "a" => {
+                if self.is_valid_movement(&self.player_coords, Movement::Left) {
+                    Movement::Left
+                } else {
+                    Movement::Invalid
+                }
+            }
+            "s" => {
+                if self.is_valid_movement(&self.player_coords, Movement::Down) {
+                    Movement::Down
+                } else {
+                    Movement::Invalid
+                }
+            }
+            "d" => {
+                if self.is_valid_movement(&self.player_coords, Movement::Right) {
+                    Movement::Right
+                } else {
+                    Movement::Invalid
+                }
+            }
+            "q" => Movement::Quit,
+            _other => Movement::Invalid,
         }
     }
 
@@ -141,20 +166,23 @@ impl Planet {
 
     fn is_valid_movement(&self, coords: &Coords, movement: Movement) -> bool {
         match movement {
-            Movement::Up => coords.y - 1 >= 0, 
+            Movement::Up => coords.y - 1 >= 0,
             Movement::Left => coords.x - 1 >= 0,
             Movement::Down => coords.y + 1 < MAP_SIZE_Y as i32,
-            Movement::Right => coords.x + 1 < MAP_SIZE_X as i32, 
-            _other => panic!("Invalid movement sent to is_valid_movement"), 
+            Movement::Right => coords.x + 1 < MAP_SIZE_X as i32,
+            _other => panic!("Invalid movement sent to is_valid_movement"),
         }
     }
 }
 
 fn get_input() -> String {
-    use std::{io, io::{Read, Write}};
+    use std::{
+        io,
+        io::{Read, Write},
+    };
     let stdout = io::stdout();
     let mut reader = io::stdin();
-    let mut buffer = [0;1]; 
+    let mut buffer = [0; 1];
     stdout.lock().flush().unwrap();
     reader.read_exact(&mut buffer).unwrap();
     let result = String::from_utf8(buffer.to_vec());
