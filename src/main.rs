@@ -16,25 +16,23 @@ fn main() {
 }
 
 fn setup_terminal_properties() {
-    use crossterm::{ExecutableCommand, cursor, execute, terminal::EnterAlternateScreen};
-    use std::io::stdout;
-    let mut stdout = stdout();
+    use crossterm::{cursor, execute, terminal::EnterAlternateScreen};
+    let mut stdout = std::io::stdout();
     let _ = execute!(stdout, EnterAlternateScreen);
-    let _ = stdout.execute(cursor::Hide); // If cursor is showing check this error
+    let _ = execute!(stdout, cursor::Hide);
+    let _ = execute!(stdout, cursor::MoveTo(0, 0));
 
-    //Make input letters invisible
+    //Make input keys invisible
     use termios::{ECHO, ICANON, TCSANOW, Termios, tcsetattr};
     let stdin = 0;
-    let termios = Termios::from_fd(stdin).unwrap();
-    let mut new_termios = termios.clone();
-    new_termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(stdin, TCSANOW, &mut new_termios).unwrap();
+    let mut termios = Termios::from_fd(stdin).unwrap();
+    termios.c_lflag &= !(ICANON | ECHO);
+    tcsetattr(stdin, TCSANOW, &mut termios).unwrap();
 }
 
 fn restore_terminal_properties() {
     use crossterm::{execute, terminal::LeaveAlternateScreen};
-    use std::io::stdout;
-    let mut stdout = stdout();
+    let mut stdout = std::io::stdout();
     let _ = execute!(stdout, LeaveAlternateScreen);
 }
 
@@ -193,6 +191,12 @@ fn get_input() -> String {
 }
 
 fn clear_screen() {
-    print!("\x1B[2J"); // Temporal solution, clearscreen resets my terminal colors
-    //clearscreen::clear().expect("Failed to clear screen");
+    use crossterm::{
+        cursor::MoveTo,
+        execute,
+        terminal::{Clear, ClearType::All},
+    };
+    let mut stdout = std::io::stdout();
+    let _ = execute!(stdout, Clear(All));
+    let _ = execute!(stdout, MoveTo(0, 0));
 }
