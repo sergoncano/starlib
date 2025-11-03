@@ -114,10 +114,34 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
     //returns Movement::Invalid.
     fn check_movement_collision(&self, coords: &Coords, movement: Movement) -> Movement {
         match movement {
-            Movement::Up => { if coords.y - 1 >= 0 { Movement::Up } else { Movement::Invalid } },
-            Movement::Left => { if coords.x - 1 >= 0 { Movement::Left } else { Movement::Invalid } },
-            Movement::Down => { if coords.y + 1 < MAP_SIZE_Y as i32 { Movement::Down } else { Movement::Invalid } },
-            Movement::Right => { if coords.x + 1 < MAP_SIZE_X as i32 { Movement::Right } else { Movement::Invalid } },
+            Movement::Up => {
+                if coords.y - 1 >= 0 {
+                    Movement::Up
+                } else {
+                    Movement::Invalid
+                }
+            }
+            Movement::Left => {
+                if coords.x - 1 >= 0 {
+                    Movement::Left
+                } else {
+                    Movement::Invalid
+                }
+            }
+            Movement::Down => {
+                if coords.y + 1 < MAP_SIZE_Y as i32 {
+                    Movement::Down
+                } else {
+                    Movement::Invalid
+                }
+            }
+            Movement::Right => {
+                if coords.x + 1 < MAP_SIZE_X as i32 {
+                    Movement::Right
+                } else {
+                    Movement::Invalid
+                }
+            }
             Movement::Wait => Movement::Wait,
             Movement::Invalid => Movement::Invalid,
             Movement::Quit => Movement::Quit,
@@ -130,15 +154,15 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
 }
 
 fn get_input() -> Movement {
+    use std::time::Duration;
     use std::{
         io,
         io::{Read, Write},
     };
     use timeout_readwrite::TimeoutReader;
-    use std::time::Duration;
     let stdout = io::stdout();
     let reader = io::stdin();
-    let mut timeout_reader = TimeoutReader::new(reader, Duration::new(3,0));
+    let mut timeout_reader = TimeoutReader::new(reader, Duration::new(3, 0));
     let mut buffer = [0; 1];
     stdout.lock().flush().unwrap();
     let result = timeout_reader.read_exact(&mut buffer);
@@ -149,8 +173,8 @@ fn get_input() -> Movement {
                 Ok(string) => string,
                 Err(_error) => String::from(""),
             }
-        },
-        Err(_) => String::from("timeout")
+        }
+        Err(_) => String::from("timeout"),
     };
     parse_input_text(string)
 }
