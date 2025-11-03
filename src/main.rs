@@ -1,3 +1,6 @@
+pub mod terminal_properties;
+use crate::terminal_properties::*;
+
 fn main() {
     setup_terminal_properties();
     let mut earth = Planet::<10, 5> {
@@ -13,27 +16,6 @@ fn main() {
         player_sprite: "ඞ",
     };
     game_loop(&mut earth);
-}
-
-fn setup_terminal_properties() {
-    use crossterm::{cursor, execute, terminal::EnterAlternateScreen};
-    let mut stdout = std::io::stdout();
-    let _ = execute!(stdout, EnterAlternateScreen);
-    let _ = execute!(stdout, cursor::Hide);
-    let _ = execute!(stdout, cursor::MoveTo(0, 0));
-
-    //Make input keys invisible
-    use termios::{ECHO, ICANON, TCSANOW, Termios, tcsetattr};
-    let stdin = 0;
-    let mut termios = Termios::from_fd(stdin).unwrap();
-    termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(stdin, TCSANOW, &mut termios).unwrap();
-}
-
-fn restore_terminal_properties() {
-    use crossterm::{execute, terminal::LeaveAlternateScreen};
-    let mut stdout = std::io::stdout();
-    let _ = execute!(stdout, LeaveAlternateScreen);
 }
 
 fn game_loop<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize>(
