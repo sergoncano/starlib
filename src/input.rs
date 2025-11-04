@@ -1,0 +1,39 @@
+use crate::movement::Movement;
+pub fn get_input() -> Movement {
+    use std::time::Duration;
+    use std::{
+        io,
+        io::{Read, Write},
+    };
+    use timeout_readwrite::TimeoutReader;
+    let stdout = io::stdout();
+    let reader = io::stdin();
+    let mut timeout_reader = TimeoutReader::new(reader, Duration::new(3, 0));
+    let mut buffer = [0; 1];
+    stdout.lock().flush().unwrap();
+    let result = timeout_reader.read_exact(&mut buffer);
+    let string = match result {
+        Ok(_) => {
+            let key = String::from_utf8(buffer.to_vec());
+            match key {
+                Ok(string) => string,
+                Err(_error) => String::from(""),
+            }
+        }
+        Err(_) => String::from("timeout"),
+    };
+    parse_input_text(string)
+}
+
+fn parse_input_text(input: String) -> Movement {
+    let input_data = &input[..];
+    match input_data {
+        "w" => Movement::Up,
+        "a" => Movement::Left,
+        "s" => Movement::Down,
+        "d" => Movement::Right,
+        "q" => Movement::Quit,
+        "timeout" => Movement::Wait,
+        _other => Movement::Invalid,
+    }
+}

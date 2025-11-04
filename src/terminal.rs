@@ -18,3 +18,14 @@ pub fn restore_terminal_properties() {
     let mut stdout = std::io::stdout();
     let _ = execute!(stdout, LeaveAlternateScreen);
 }
+
+pub fn clear_screen() {
+    use crossterm::{
+        cursor::MoveTo,
+        execute,
+        terminal::{Clear, ClearType::All},
+    };
+    let mut stdout = std::io::stdout();
+    let _ = execute!(stdout, Clear(All));
+    let _ = execute!(stdout, MoveTo(0, 0));
+}
