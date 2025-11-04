@@ -16,10 +16,10 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         player_sprite: &'static str,
     ) -> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
         Planet::<MAP_SIZE_X, MAP_SIZE_Y> {
-            name: name,
-            map: map,
-            player_coords: player_coords,
-            player_sprite: player_sprite,
+            name,
+            map,
+            player_coords,
+            player_sprite,
         }
     }
 
@@ -36,10 +36,10 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
                 }
                 x += 1;
             }
-            map_str.push_str("\n");
+            map_str.push('\n');
             y += 1;
         }
-        return map_str;
+        map_str
     }
 
     pub fn generate_banner(&self) -> String {
@@ -49,14 +49,14 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         }
         let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 / 2.0;
         for _i in 0..(dashes.floor() as i32) {
-            banner.push_str("-");
+            banner.push('-');
         }
         banner.push_str(self.name);
         for _i in 0..(dashes.ceil() as i32) {
-            banner.push_str("-");
+            banner.push('-');
         }
-        banner.push_str("\n");
-        return banner;
+        banner.push('\n');
+        banner
     }
 
     pub fn move_player(&mut self, movement: Movement) {
@@ -75,14 +75,14 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
     pub fn check_movement_collision(&self, coords: &Coords, movement: Movement) -> Movement {
         match movement {
             Movement::Up => {
-                if coords.get_y() - 1 >= 0 {
+                if coords.get_y() >= 1 {
                     Movement::Up
                 } else {
                     Movement::Invalid
                 }
             }
             Movement::Left => {
-                if coords.get_x() - 1 >= 0 {
+                if coords.get_x() >= 1 {
                     Movement::Left
                 } else {
                     Movement::Invalid

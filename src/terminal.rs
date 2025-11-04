@@ -10,7 +10,7 @@ pub fn setup_terminal_properties() {
     let stdin = 0;
     let mut termios = Termios::from_fd(stdin).unwrap();
     termios.c_lflag &= !(ICANON | ECHO);
-    tcsetattr(stdin, TCSANOW, &mut termios).unwrap();
+    tcsetattr(stdin, TCSANOW, &termios).unwrap();
 }
 
 pub fn restore_terminal_properties() {
