@@ -41,6 +41,9 @@ impl Collider {
     }
 }
 
+//This function takes a map and a character as arguments, returns a vector of colliders which
+//contain the coordinates in which the provided character appears in the map. These colliders block
+//movement in all four directions inward.
 pub fn collider_vector_from_map(map: &[&'static str], character: char) -> Vec<Collider> {
     let mut res: Vec<Collider> = Vec::new();
     for (y, line) in map.iter().enumerate() {
@@ -61,6 +64,9 @@ pub fn collider_vector_from_map(map: &[&'static str], character: char) -> Vec<Co
     res
 }
 
+//This function does the same as collider_vector_from_map except it takes an additional direction
+//movement, this dictates from which direction the movement is blocked in the generated colliders.
+//E.g.: If you pass Movement::Left, an entity right of the colliders moving right will be blocked.
 pub fn directed_collider_vector_from_map(map: &[&'static str], character: char, direction: Movement) -> Vec<Collider> {
     let mut res: Vec<Collider> = Vec::new();
     for (y, line) in map.iter().enumerate() {
