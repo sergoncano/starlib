@@ -1,4 +1,5 @@
 use crate::coords::Coords;
+use crate::collider::{self, Collider};
 use crate::movement::Movement;
 use crate::renderable::{self, Renderable};
 use std::collections::HashMap;
@@ -9,6 +10,7 @@ pub struct Planet<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> {
     player_coords: Coords,
     player_sprite: &'static str,
     decorations: HashMap<Coords, Box<dyn Renderable>>,
+    colliders: HashMap<Coords, Collider>
 }
 
 impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
@@ -18,6 +20,7 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         player_coords: Coords,
         player_sprite: &'static str,
         decorations: Vec<Box<dyn Renderable>>,
+        colliders: Vec<Collider>
     ) -> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
         Planet::<MAP_SIZE_X, MAP_SIZE_Y> {
             name,
@@ -25,6 +28,7 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
             player_coords,
             player_sprite,
             decorations: renderable::get_rendering_hashmap(decorations),
+            colliders: collider::collider_map_from_vector(colliders),
         }
     }
 
@@ -88,36 +92,38 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
     pub fn check_movement_collision(&self, coords: &Coords, movement: Movement) -> Movement {
         match movement {
             Movement::Up => {
-                if coords.get_y() >= 1 {
-                    Movement::Up
-                } else {
+                let future_coords = Coords::new(coords.get_x(), coords.get_y() - 1);
+                if coords.get_y() < 1 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) {
                     Movement::Invalid
+                } else {
+                    movement
                 }
-            }
+            },
             Movement::Left => {
-                if coords.get_x() >= 1 {
-                    Movement::Left
-                } else {
+                let future_coords = Coords::new(coords.get_x() - 1, coords.get_y());
+                if coords.get_x() < 1  || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) {
                     Movement::Invalid
+                } else {
+                    movement
                 }
-            }
+            },
             Movement::Down => {
-                if coords.get_y() + 1 < MAP_SIZE_Y as i32 {
-                    Movement::Down
-                } else {
+                let future_coords = Coords::new(coords.get_x(), coords.get_y() + 1);
+                if coords.get_y() + 1 >= MAP_SIZE_Y as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
                     Movement::Invalid
+                } else {
+                    movement
                 }
-            }
+            },
             Movement::Right => {
-                if coords.get_x() + 1 < MAP_SIZE_X as i32 {
-                    Movement::Right
-                } else {
+                let future_coords = Coords::new(coords.get_x() + 1, coords.get_y());
+                if coords.get_x() + 1 >= MAP_SIZE_X as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
                     Movement::Invalid
+                } else {
+                    movement
                 }
-            }
-            Movement::Wait => Movement::Wait,
-            Movement::Invalid => Movement::Invalid,
-            Movement::Quit => Movement::Quit,
+            },
+            _ => { movement }
         }
     }
 

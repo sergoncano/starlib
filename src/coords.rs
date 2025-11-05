@@ -1,4 +1,4 @@
-#[derive(Hash, PartialEq, Eq, Clone)]
+#[derive(Hash, PartialEq, Eq, Clone, Debug)]
 pub struct Coords {
     x: i32,
     y: i32,

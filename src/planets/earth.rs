@@ -1,4 +1,5 @@
 use crate::coords::Coords;
+use crate::collider;
 use crate::decoration;
 use crate::planet::Planet;
 
@@ -11,9 +12,11 @@ pub fn generate() -> Planet<10, 5> {
         ".......|..",
     ];
 
-    let trees = decoration::decoration_vector_from_map(&map, '@', 1);
+    let leaves = decoration::decoration_vector_from_map(&map, '@', 1);
 
-    let earth: Planet<10, 5> = Planet::new("Earth", map, Coords::new(4, 2), "ඞ", trees);
+    let logs = collider::collider_vector_from_map(&map, '|');
+
+    let earth: Planet<10, 5> = Planet::new("Earth", map, Coords::new(4, 2), "ඞ", leaves, logs);
 
     earth
 }

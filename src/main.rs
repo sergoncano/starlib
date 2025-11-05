@@ -1,3 +1,4 @@
+pub mod collider;
 pub mod coords;
 pub mod decoration;
 pub mod input;
