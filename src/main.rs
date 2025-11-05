@@ -3,9 +3,9 @@ pub mod decoration;
 pub mod input;
 pub mod movement;
 pub mod planet;
+pub mod planets;
 pub mod renderable;
 pub mod terminal;
-pub mod planets;
 
 use movement::Movement;
 use planet::Planet;

@@ -21,15 +21,19 @@ impl Renderable for Decoration {
     }
 }
 
-pub fn decoration_vector_from_map(map: &[&'static str], character: char, z_index: i32) -> Vec<Box<dyn Renderable>> {
+pub fn decoration_vector_from_map(
+    map: &[&'static str],
+    character: char,
+    z_index: i32,
+) -> Vec<Box<dyn Renderable>> {
     let mut res: Vec<Box<dyn Renderable>> = Vec::new();
     for (y, line) in map.iter().enumerate() {
         for (x, char) in line.chars().enumerate() {
             if char == character {
                 let decoration = Decoration {
-                    sprite: &line[x..x+1],
+                    sprite: &line[x..x + 1],
                     coords: Coords::new(x as i32, y as i32),
-                    z_index: z_index
+                    z_index: z_index,
                 };
                 res.push(Box::from(decoration));
             }

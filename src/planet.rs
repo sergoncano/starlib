@@ -18,7 +18,6 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         player_coords: Coords,
         player_sprite: &'static str,
         decorations: Vec<Box<dyn Renderable>>,
-
     ) -> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
         Planet::<MAP_SIZE_X, MAP_SIZE_Y> {
             name,
