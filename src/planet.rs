@@ -1,11 +1,14 @@
 use crate::coords::Coords;
 use crate::movement::Movement;
+use crate::renderable::{self, Renderable};
+use std::collections::HashMap;
 
 pub struct Planet<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> {
     name: &'static str,
     map: [&'static str; MAP_SIZE_Y],
     player_coords: Coords,
     player_sprite: &'static str,
+    decorations: HashMap<Coords, Box<dyn Renderable>>,
 }
 
 impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
@@ -14,12 +17,15 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         map: [&'static str; MAP_SIZE_Y],
         player_coords: Coords,
         player_sprite: &'static str,
+        decorations: Vec<Box<dyn Renderable>>,
+
     ) -> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
         Planet::<MAP_SIZE_X, MAP_SIZE_Y> {
             name,
             map,
             player_coords,
             player_sprite,
+            decorations: renderable::get_rendering_hashmap(decorations),
         }
     }
 
@@ -29,6 +35,14 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         for line in self.map {
             let mut x: i32 = 0;
             for character in line.chars() {
+                let current_coords = &Coords::new(x, y);
+                if self.decorations.contains_key(current_coords) {
+                    if self.decorations[current_coords].get_z_index() > 0 {
+                        map_str.push_str(self.decorations[current_coords].get_sprite());
+                        x += 1;
+                        continue;
+                    }
+                }
                 if x == self.player_coords.get_x() && y == self.player_coords.get_y() {
                     map_str.push_str(self.player_sprite);
                 } else {

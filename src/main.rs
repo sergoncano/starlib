@@ -1,27 +1,19 @@
 pub mod coords;
+pub mod decoration;
 pub mod input;
 pub mod movement;
 pub mod planet;
+pub mod renderable;
 pub mod terminal;
+pub mod planets;
 
-use coords::Coords;
 use movement::Movement;
 use planet::Planet;
+use planets::earth;
 
 fn main() {
     terminal::setup_terminal_properties();
-    let mut earth: Planet<10, 5> = Planet::new(
-        "Earth",
-        [
-            "..........",
-            "..........",
-            "..........",
-            "..........",
-            "..........",
-        ],
-        Coords::new(4, 2),
-        "ඞ",
-    );
+    let mut earth = earth::generate();
     game_loop(&mut earth);
 }
 
