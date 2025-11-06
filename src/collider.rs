@@ -12,6 +12,10 @@ pub struct Collider {
 }
 
 impl Collider {
+    pub fn new(coords: Coords, collides_entering_from_up: bool, collides_entering_from_left: bool, collides_entering_from_down: bool, collides_entering_from_right: bool) -> Collider {
+        Collider { coords, collides_entering_from_up, collides_entering_from_left, collides_entering_from_down, collides_entering_from_right }
+    }
+
     pub fn get_coords(&self) -> Coords {
         self.coords.clone()
     }
