@@ -2,6 +2,7 @@ pub mod collider;
 pub mod coords;
 pub mod decoration;
 pub mod input;
+pub mod map;
 pub mod movement;
 pub mod planet;
 pub mod planets;
