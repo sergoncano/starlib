@@ -3,7 +3,7 @@ use crate::collider;
 use crate::decoration;
 use crate::planet::Planet;
 
-pub fn generate() -> Planet<10, 5> {
+pub fn generate() -> Planet {
     let map = [
         ".......@..",
         ".......|..",
@@ -16,7 +16,7 @@ pub fn generate() -> Planet<10, 5> {
 
     let logs = collider::collider_vector_from_map(&map, '|');
 
-    let earth: Planet<10, 5> = Planet::new("Earth", map, Coords::new(4, 2), "ඞ", leaves, logs);
+    let earth: Planet = Planet::new("Earth", Vec::from(map), Coords::new(4, 2), "ඞ", leaves, logs);
 
     earth
 }

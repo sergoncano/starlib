@@ -18,8 +18,8 @@ fn main() {
     game_loop(&mut earth);
 }
 
-fn game_loop<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize>(
-    planet: &mut Planet<MAP_SIZE_X, MAP_SIZE_Y>,
+fn game_loop(
+    planet: &mut Planet,
 ) {
     print!("{}", planet.generate_banner());
     print!("{}", planet.generate_map());

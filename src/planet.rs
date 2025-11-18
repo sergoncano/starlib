@@ -4,25 +4,25 @@ use crate::movement::Movement;
 use crate::renderable::{self, Renderable};
 use std::collections::HashMap;
 
-pub struct Planet<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> {
+pub struct Planet {
     name: &'static str,
-    map: [&'static str; MAP_SIZE_Y],
+    map: Vec<&'static str>,
     player_coords: Coords,
     player_sprite: &'static str,
     decorations: HashMap<Coords, Box<dyn Renderable>>,
     colliders: HashMap<Coords, Collider>
 }
 
-impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
+impl Planet {
     pub fn new(
         name: &'static str,
-        map: [&'static str; MAP_SIZE_Y],
+        map: Vec<&'static str>,
         player_coords: Coords,
         player_sprite: &'static str,
         decorations: Vec<Box<dyn Renderable>>,
         colliders: Vec<Collider>
-    ) -> Planet<MAP_SIZE_X, MAP_SIZE_Y> {
-        Planet::<MAP_SIZE_X, MAP_SIZE_Y> {
+    ) -> Planet {
+        Planet {
             name,
             map,
             player_coords,
@@ -32,10 +32,22 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
         }
     }
 
+    fn get_map_size_x(&self) -> usize {
+        let mut size_x: usize = 0;
+        for _ in self.map[0].chars() {
+            size_x += 1;
+        }
+        size_x
+    }
+
+    fn get_map_size_y(&self) -> usize {
+        self.map.len()
+    }
+
     pub fn generate_map(&self) -> String {
         let mut map_str = String::from("");
         let mut y: i32 = 0;
-        for line in self.map {
+        for line in &self.map {
             let mut x: i32 = 0;
             for character in line.chars() {
                 let current_coords = &Coords::new(x, y);
@@ -61,10 +73,10 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
 
     pub fn generate_banner(&self) -> String {
         let mut banner = String::from("");
-        if self.name.len() > MAP_SIZE_X {
+        if self.name.len() > self.get_map_size_x() {
             return String::from("");
         }
-        let dashes: f64 = (MAP_SIZE_X - self.name.len()) as f64 / 2.0;
+        let dashes: f64 = (self.get_map_size_x()- self.name.len()) as f64 / 2.0;
         for _i in 0..(dashes.floor() as i32) {
             banner.push('-');
         }
@@ -109,7 +121,7 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
             },
             Movement::Down => {
                 let future_coords = Coords::new(coords.get_x(), coords.get_y() + 1);
-                if coords.get_y() + 1 >= MAP_SIZE_Y as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
+                if coords.get_y() + 1 >= self.get_map_size_y() as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
                     Movement::Invalid
                 } else {
                     movement
@@ -117,7 +129,7 @@ impl<const MAP_SIZE_X: usize, const MAP_SIZE_Y: usize> Planet<MAP_SIZE_X, MAP_SI
             },
             Movement::Right => {
                 let future_coords = Coords::new(coords.get_x() + 1, coords.get_y());
-                if coords.get_x() + 1 >= MAP_SIZE_X as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
+                if coords.get_x() + 1 >= self.get_map_size_x() as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
                     Movement::Invalid
                 } else {
                     movement
