@@ -14,7 +14,10 @@ pub mod terminal;
 use planet::Planet;
 use planets::earth;
 
-use crate::{coords::Coords, entities::{Entity, player::Player}};
+use crate::{
+    coords::Coords,
+    entities::{Entity, player::Player},
+};
 
 fn main() {
     terminal::setup_terminal_properties();
@@ -22,11 +25,8 @@ fn main() {
     game_loop(&mut earth);
 }
 
-fn game_loop(
-    planet: &mut Planet,
-) {
-
-    let player: Box<dyn Entity> = Box::new(Player::new(Coords::new(3,2), "ඞ"));
+fn game_loop(planet: &mut Planet) {
+    let player: Box<dyn Entity> = Box::new(Player::new(Coords::new(3, 2), "ඞ"));
     let mut entities = vec![player];
     print!("{}", planet.generate_banner());
     print!("{}", planet.generate_map(&entities));

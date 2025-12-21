@@ -1,5 +1,5 @@
-use crate::coords::Coords;
 use crate::collider::{self, Collider};
+use crate::coords::Coords;
 use crate::entities::Entity;
 use crate::map;
 use crate::movement::Movement;
@@ -10,7 +10,7 @@ pub struct Planet {
     name: &'static str,
     map: Vec<&'static str>,
     decorations: HashMap<Coords, Box<dyn Renderable>>,
-    colliders: HashMap<Coords, Collider>
+    colliders: HashMap<Coords, Collider>,
 }
 
 impl Planet {
@@ -18,7 +18,7 @@ impl Planet {
         name: &'static str,
         map: Vec<&'static str>,
         decorations: Vec<Box<dyn Renderable>>,
-        colliders: Vec<Collider>
+        colliders: Vec<Collider>,
     ) -> Planet {
         map::check_map(&map);
         Planet {
@@ -52,11 +52,19 @@ impl Planet {
             let mut x: i32 = 0;
             for character in line.chars() {
                 let current_coords = &Coords::new(x, y);
-                if self.decorations.contains_key(current_coords) || entity_hashmap.contains_key(current_coords) {
-                    if self.decorations.contains_key(current_coords) && entity_hashmap.contains_key(current_coords) {
-                        if self.decorations[current_coords].get_z_index() > entity_hashmap[current_coords].get_z_index() {
+                if self.decorations.contains_key(current_coords)
+                    || entity_hashmap.contains_key(current_coords)
+                {
+                    if self.decorations.contains_key(current_coords)
+                        && entity_hashmap.contains_key(current_coords)
+                    {
+                        if self.decorations[current_coords].get_z_index()
+                            > entity_hashmap[current_coords].get_z_index()
+                        {
                             map_str.push_str(self.decorations[current_coords].get_sprite());
-                        } else if self.decorations[current_coords].get_z_index() < entity_hashmap[current_coords].get_z_index()  {
+                        } else if self.decorations[current_coords].get_z_index()
+                            < entity_hashmap[current_coords].get_z_index()
+                        {
                             map_str.push_str(entity_hashmap[current_coords].get_sprite());
                         } else {
                             panic!("Z fighting between during map generation!");
@@ -83,7 +91,7 @@ impl Planet {
         if self.name.len() > self.get_map_size_x() {
             return String::from("");
         }
-        let dashes: f64 = (self.get_map_size_x()- self.name.len()) as f64 / 2.0;
+        let dashes: f64 = (self.get_map_size_x() - self.name.len()) as f64 / 2.0;
         for _i in 0..(dashes.floor() as i32) {
             banner.push('-');
         }
@@ -101,37 +109,49 @@ impl Planet {
         match movement {
             Movement::Up => {
                 let future_coords = Coords::new(coords.get_x(), coords.get_y() - 1);
-                if coords.get_y() < 1 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) {
+                if coords.get_y() < 1
+                    || (self.colliders.contains_key(&future_coords)
+                        && self.colliders[&future_coords].collides(&movement))
+                {
                     Movement::Invalid
                 } else {
                     movement
                 }
-            },
+            }
             Movement::Left => {
                 let future_coords = Coords::new(coords.get_x() - 1, coords.get_y());
-                if coords.get_x() < 1  || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) {
+                if coords.get_x() < 1
+                    || (self.colliders.contains_key(&future_coords)
+                        && self.colliders[&future_coords].collides(&movement))
+                {
                     Movement::Invalid
                 } else {
                     movement
                 }
-            },
+            }
             Movement::Down => {
                 let future_coords = Coords::new(coords.get_x(), coords.get_y() + 1);
-                if coords.get_y() + 1 >= self.get_map_size_y() as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
+                if coords.get_y() + 1 >= self.get_map_size_y() as i32
+                    || (self.colliders.contains_key(&future_coords)
+                        && self.colliders[&future_coords].collides(&movement))
+                {
                     Movement::Invalid
                 } else {
                     movement
                 }
-            },
+            }
             Movement::Right => {
                 let future_coords = Coords::new(coords.get_x() + 1, coords.get_y());
-                if coords.get_x() + 1 >= self.get_map_size_x() as i32 || (self.colliders.contains_key(&future_coords) && self.colliders[&future_coords].collides(&movement)) { 
+                if coords.get_x() + 1 >= self.get_map_size_x() as i32
+                    || (self.colliders.contains_key(&future_coords)
+                        && self.colliders[&future_coords].collides(&movement))
+                {
                     Movement::Invalid
                 } else {
                     movement
                 }
-            },
-            _ => { movement }
+            }
+            _ => movement,
         }
     }
 }

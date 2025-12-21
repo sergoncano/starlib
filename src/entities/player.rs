@@ -1,4 +1,13 @@
-use crate::{coords::Coords, entities::Entity, event::{Event, EventDriven}, input, movement::Movement, planet::Planet, renderable::Renderable, terminal};
+use crate::{
+    coords::Coords,
+    entities::Entity,
+    event::{Event, EventDriven},
+    input,
+    movement::Movement,
+    planet::Planet,
+    renderable::Renderable,
+    terminal,
+};
 
 pub struct Player {
     coords: Coords,

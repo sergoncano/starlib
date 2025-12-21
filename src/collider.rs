@@ -12,8 +12,20 @@ pub struct Collider {
 }
 
 impl Collider {
-    pub fn new(coords: Coords, collides_entering_from_up: bool, collides_entering_from_left: bool, collides_entering_from_down: bool, collides_entering_from_right: bool) -> Collider {
-        Collider { coords, collides_entering_from_up, collides_entering_from_left, collides_entering_from_down, collides_entering_from_right }
+    pub fn new(
+        coords: Coords,
+        collides_entering_from_up: bool,
+        collides_entering_from_left: bool,
+        collides_entering_from_down: bool,
+        collides_entering_from_right: bool,
+    ) -> Collider {
+        Collider {
+            coords,
+            collides_entering_from_up,
+            collides_entering_from_left,
+            collides_entering_from_down,
+            collides_entering_from_right,
+        }
     }
 
     pub fn get_coords(&self) -> Coords {
@@ -22,14 +34,21 @@ impl Collider {
 
     fn add(&self, other: &Collider) -> Collider {
         if self.coords != other.coords {
-            panic!("Tried to add two colliders without equal coordinates: {:?} and {:?}", self.coords, other.coords);
+            panic!(
+                "Tried to add two colliders without equal coordinates: {:?} and {:?}",
+                self.coords, other.coords
+            );
         }
         Collider {
             coords: self.coords.clone(),
-            collides_entering_from_up: self.collides_entering_from_up || other.collides_entering_from_up,
-            collides_entering_from_left: self.collides_entering_from_left || other.collides_entering_from_left,
-            collides_entering_from_down: self.collides_entering_from_down || other.collides_entering_from_down,
-            collides_entering_from_right: self.collides_entering_from_right || other.collides_entering_from_right,
+            collides_entering_from_up: self.collides_entering_from_up
+                || other.collides_entering_from_up,
+            collides_entering_from_left: self.collides_entering_from_left
+                || other.collides_entering_from_left,
+            collides_entering_from_down: self.collides_entering_from_down
+                || other.collides_entering_from_down,
+            collides_entering_from_right: self.collides_entering_from_right
+                || other.collides_entering_from_right,
         }
     }
 
@@ -56,7 +75,7 @@ pub fn collider_vector_from_map(map: &[&'static str], character: char) -> Vec<Co
                 continue;
             }
             let collider = Collider {
-                coords: Coords::new(x as i32, y as i32), 
+                coords: Coords::new(x as i32, y as i32),
                 collides_entering_from_up: true,
                 collides_entering_from_left: true,
                 collides_entering_from_down: true,
@@ -71,7 +90,11 @@ pub fn collider_vector_from_map(map: &[&'static str], character: char) -> Vec<Co
 //This function does the same as collider_vector_from_map except it takes an additional direction
 //movement, this dictates from which direction the movement is blocked in the generated colliders.
 //E.g.: If you pass Movement::Left, an entity right of the colliders moving right will be blocked.
-pub fn directed_collider_vector_from_map(map: &[&'static str], character: char, direction: Movement) -> Vec<Collider> {
+pub fn directed_collider_vector_from_map(
+    map: &[&'static str],
+    character: char,
+    direction: Movement,
+) -> Vec<Collider> {
     let mut res: Vec<Collider> = Vec::new();
     for (y, line) in map.iter().enumerate() {
         for (x, map_char) in line.chars().enumerate() {
@@ -90,7 +113,7 @@ pub fn directed_collider_vector_from_map(map: &[&'static str], character: char, 
                 _ => panic!("Invalid collider direction!"),
             };
             let collider = Collider {
-                coords: Coords::new(x as i32, y as i32), 
+                coords: Coords::new(x as i32, y as i32),
                 collides_entering_from_up: up,
                 collides_entering_from_left: left,
                 collides_entering_from_down: down,
