@@ -41,47 +41,41 @@ impl Planet {
         self.map.len()
     }
 
-    pub fn generate_map(&self, entities: &Vec<Box<dyn Entity>>) -> String {
+    pub fn generate_map(&self, entity_vector: &Vec<Box<dyn Entity>>) -> String {
         let mut map_str = String::from("");
-        let mut entity_hashmap = HashMap::new();
-        for entity in entities {
-            entity_hashmap.insert(entity.get_coords(), entity);
-        }
-        let mut y: i32 = 0;
-        for line in &self.map {
-            let mut x: i32 = 0;
-            for character in line.chars() {
-                let current_coords = &Coords::new(x, y);
-                if self.decorations.contains_key(current_coords)
-                    || entity_hashmap.contains_key(current_coords)
-                {
-                    if self.decorations.contains_key(current_coords)
-                        && entity_hashmap.contains_key(current_coords)
-                    {
-                        if self.decorations[current_coords].get_z_index()
-                            > entity_hashmap[current_coords].get_z_index()
-                        {
-                            map_str.push_str(self.decorations[current_coords].get_sprite());
-                        } else if self.decorations[current_coords].get_z_index()
-                            < entity_hashmap[current_coords].get_z_index()
-                        {
-                            map_str.push_str(entity_hashmap[current_coords].get_sprite());
-                        } else {
-                            panic!("Z fighting between during map generation!");
-                        }
-                    } else if self.decorations.contains_key(current_coords) {
-                        map_str.push_str(self.decorations[current_coords].get_sprite());
-                    } else {
-                        map_str.push_str(entity_hashmap[current_coords].get_sprite());
-                    }
-                    x += 1;
-                    continue;
+        let mut entities = HashMap::new();
+        for entity in entity_vector {
+            let coords = entity.get_coords(); 
+            if !entities.contains_key(&coords) {
+                entities.insert(coords, entity);
+            } else {
+                if entities[&coords].get_z_index() < entity.get_z_index() {
+                    entities.insert(coords, entity);
+                } else if entities[&coords].get_z_index() == entity.get_z_index() {
+                    panic!("Z fighting during map rendering!");
                 }
-                map_str.push(character);
-                x += 1;
+            }
+        }
+        for (y, line) in self.map.iter().enumerate() {
+            for (x, character) in line.chars().enumerate() {
+                let current_coords = Coords::new(x as i32, y as i32);
+                let mut sprite = character.to_string();
+                let mut z_index = i32::MIN;
+                if self.decorations.contains_key(&current_coords) {
+                    sprite = self.decorations[&current_coords].get_sprite();
+                    z_index = self.decorations[&current_coords].get_z_index();
+                }
+                if entities.contains_key(&current_coords)  {
+                    let entity_z_index = entities[&current_coords].get_z_index();
+                    if entity_z_index == z_index {
+                        panic!("Z fighting during map rendering!");
+                    } else if entity_z_index > z_index {
+                        sprite = entities[&current_coords].get_sprite();
+                    }
+                }
+                map_str.push_str(&sprite);
             }
             map_str.push('\n');
-            y += 1;
         }
         map_str
     }

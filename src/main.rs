@@ -26,7 +26,7 @@ fn main() {
 }
 
 fn game_loop(planet: &mut Planet) {
-    let player: Box<dyn Entity> = Box::new(Player::new(Coords::new(3, 2), "ඞ"));
+    let player: Box<dyn Entity> = Box::new(Player::new(Coords::new(3, 2), String::from("ඞ")));
     let mut entities = vec![player];
     print!("{}", planet.generate_banner());
     print!("{}", planet.generate_map(&entities));

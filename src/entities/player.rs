@@ -11,7 +11,7 @@ use crate::{
 
 pub struct Player {
     coords: Coords,
-    sprite: &'static str,
+    sprite: String,
     z_index: i32,
     sent_event: Option<Event>,
 }
@@ -39,8 +39,8 @@ impl EventDriven for Player {
 }
 
 impl Renderable for Player {
-    fn get_sprite(&self) -> &'static str {
-        self.sprite
+    fn get_sprite(&self) -> String {
+        self.sprite.clone()
     }
     fn get_coords(&self) -> Coords {
         self.coords.clone()
@@ -53,7 +53,7 @@ impl Renderable for Player {
 impl Entity for Player {}
 
 impl Player {
-    pub fn new(coords: Coords, sprite: &'static str) -> Player {
+    pub fn new(coords: Coords, sprite: String) -> Player {
         Player {
             coords,
             sprite,

@@ -2,14 +2,14 @@ use crate::coords::Coords;
 use crate::renderable::Renderable;
 
 struct Decoration {
-    sprite: &'static str,
+    sprite: String,
     coords: Coords,
     z_index: i32,
 }
 
 impl Renderable for Decoration {
-    fn get_sprite(&self) -> &'static str {
-        self.sprite
+    fn get_sprite(&self) -> String {
+        self.sprite.clone()
     }
 
     fn get_coords(&self) -> Coords {
@@ -31,7 +31,7 @@ pub fn decoration_vector_from_map(
         for (x, char) in line.chars().enumerate() {
             if char == character {
                 let decoration = Decoration {
-                    sprite: &line[x..x + 1],
+                    sprite: String::from(char),
                     coords: Coords::new(x as i32, y as i32),
                     z_index: z_index,
                 };

@@ -2,7 +2,7 @@ use crate::coords::Coords;
 use std::collections::HashMap;
 
 pub trait Renderable {
-    fn get_sprite(&self) -> &'static str;
+    fn get_sprite(&self) -> String;
     fn get_coords(&self) -> Coords;
     fn get_z_index(&self) -> i32;
 }
