@@ -1,6 +1,8 @@
 pub mod collider;
 pub mod coords;
 pub mod decoration;
+pub mod entities;
+pub mod event;
 pub mod input;
 pub mod map;
 pub mod movement;
@@ -9,9 +11,10 @@ pub mod planets;
 pub mod renderable;
 pub mod terminal;
 
-use movement::Movement;
 use planet::Planet;
 use planets::earth;
+
+use crate::{coords::Coords, entities::{Entity, player::Player}};
 
 fn main() {
     terminal::setup_terminal_properties();
@@ -22,20 +25,17 @@ fn main() {
 fn game_loop(
     planet: &mut Planet,
 ) {
+
+    let player: Box<dyn Entity> = Box::new(Player::new(Coords::new(3,2), "ඞ"));
+    let mut entities = vec![player];
     print!("{}", planet.generate_banner());
-    print!("{}", planet.generate_map());
+    print!("{}", planet.generate_map(&entities));
     loop {
-        let movement_input = input::get_input();
-        let movement = planet.check_movement_collision(planet.get_player_coords(), movement_input);
-        if movement == Movement::Quit {
-            terminal::restore_terminal_properties();
-            std::process::exit(0);
+        for entity in entities.iter_mut() {
+            entity.take_turn(&planet);
         }
-        if movement != Movement::Invalid {
-            planet.move_player(movement);
-            terminal::clear_screen();
-            print!("{}", planet.generate_banner());
-            print!("{}", planet.generate_map());
-        }
+        terminal::clear_screen();
+        print!("{}", planet.generate_banner());
+        print!("{}", planet.generate_map(&entities));
     }
 }

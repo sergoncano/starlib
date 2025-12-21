@@ -1,4 +1,3 @@
-use crate::coords::Coords;
 use crate::collider;
 use crate::decoration;
 use crate::planet::Planet;
@@ -16,7 +15,7 @@ pub fn generate() -> Planet {
 
     let logs = collider::collider_vector_from_map(&map, '|');
 
-    let earth: Planet = Planet::new("Earth", Vec::from(map), Coords::new(4, 2), "ඞ", leaves, logs);
+    let earth: Planet = Planet::new("Earth", Vec::from(map), leaves, logs);
 
     earth
 }
