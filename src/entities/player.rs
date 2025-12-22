@@ -13,11 +13,11 @@ pub struct Player {
     coords: Coords,
     sprite: String,
     z_index: i32,
-    sent_event: Option<Event>,
+    sent_event: Vec<Event>,
 }
 
 impl EventDriven for Player {
-    fn get_event(&self) -> Option<Event> {
+    fn get_event(&self) -> Vec<Event> {
         self.sent_event.clone()
     }
 
@@ -26,7 +26,7 @@ impl EventDriven for Player {
     }
 
     fn take_turn(&mut self, planet: &Planet) {
-        self.sent_event = Option::None;
+        self.sent_event = vec![];
         let movement = input::get_input();
         if movement == Movement::Quit {
             terminal::restore_terminal_properties();
@@ -34,7 +34,7 @@ impl EventDriven for Player {
         }
         let validated_movement = planet.check_movement_collision(&self.coords, movement);
         self.coords.do_movement(validated_movement);
-        self.sent_event = Some(Event::PlayerMovedTo(self.coords.clone()));
+        self.sent_event.push(Event::PlayerMovedTo(self.coords.clone()));
     }
 }
 
@@ -58,7 +58,7 @@ impl Player {
             coords,
             sprite,
             z_index: 0,
-            sent_event: Option::None,
+            sent_event: vec![],
         }
     }
 }
