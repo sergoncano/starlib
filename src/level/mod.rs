@@ -11,9 +11,16 @@ fn game_loop(planet: Planet, mut entities: Vec<Box<dyn Entity>>) {
             entity.take_turn(&planet);
             event_queue.extend(entity.get_event());
         }
-        for event in event_queue {
-            for entity in entities.iter_mut() {
-                entity.handle_event(&event);
+        loop {
+            let mut reaction_event_queue: Vec<Event> = vec![];
+            for event in &event_queue[..] {
+                for entity in entities.iter_mut() {
+                    reaction_event_queue.extend(entity.handle_event(&event));
+                }
+            }
+            event_queue = reaction_event_queue;
+            if event_queue.is_empty() {
+                break;
             }
         }
         terminal::clear_screen();

@@ -1,7 +1,7 @@
 use crate::{
     coords::Coords,
     entities::{Entity, player::Player, rabbit::Rabbit},
-    levels::game_loop,
+    level::game_loop,
     planets::earth,
 };
 

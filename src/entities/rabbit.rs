@@ -22,10 +22,11 @@ impl EventDriven for Rabbit {
         self.sent_events.clone()
     }
 
-    fn handle_event(&mut self, event: &Event) {
+    fn handle_event(&mut self, event: &Event) -> Vec<Event> {
         match event {
             Event::PlayerMovedTo(coords) => self.player_coords = coords.clone(),
         }
+        return vec![];
     }
 
     fn take_turn(&mut self, planet: &Planet) {

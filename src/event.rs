@@ -7,6 +7,6 @@ pub enum Event {
 
 pub trait EventDriven {
     fn get_event(&self) -> Vec<Event>;
-    fn handle_event(&mut self, event: &Event);
+    fn handle_event(&mut self, event: &Event) -> Vec<Event>;
     fn take_turn(&mut self, planet: &Planet);
 }

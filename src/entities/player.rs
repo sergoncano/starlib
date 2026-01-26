@@ -21,8 +21,8 @@ impl EventDriven for Player {
         self.sent_event.clone()
     }
 
-    fn handle_event(&mut self, _: &Event) {
-        return;
+    fn handle_event(&mut self, _: &Event) -> Vec<Event> {
+        vec![]
     }
 
     fn take_turn(&mut self, planet: &Planet) {
