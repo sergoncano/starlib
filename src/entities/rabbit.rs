@@ -1,6 +1,13 @@
 use rand::Rng;
 
-use crate::{coords::Coords, entities::Entity, event::{Event, EventDriven}, movement::Movement, planet::Planet, renderable::Renderable};
+use crate::{
+    coords::Coords,
+    entities::Entity,
+    event::{Event, EventDriven},
+    movement::Movement,
+    planet::Planet,
+    renderable::Renderable,
+};
 
 pub struct Rabbit {
     coords: Coords,
@@ -29,7 +36,11 @@ impl EventDriven for Rabbit {
             if self.coords.get_x() > self.player_coords.get_x() {
                 movement = Movement::Right;
             } else if self.coords.get_x() == self.player_coords.get_x() {
-                movement = if rng.random() || rng.random() { Movement::Right } else  { Movement::Left };
+                movement = if rng.random() || rng.random() {
+                    Movement::Right
+                } else {
+                    Movement::Left
+                };
             } else {
                 movement = Movement::Left;
             }
@@ -37,12 +48,17 @@ impl EventDriven for Rabbit {
             if self.coords.get_y() > self.player_coords.get_y() {
                 movement = Movement::Down;
             } else if self.coords.get_y() == self.player_coords.get_y() {
-                movement = if rng.random() || rng.random() { Movement::Up } else  { Movement::Down };
+                movement = if rng.random() || rng.random() {
+                    Movement::Up
+                } else {
+                    Movement::Down
+                };
             } else {
                 movement = Movement::Up;
             }
         }
-        self.coords.do_movement(planet.check_movement_collision(&self.coords, movement));
+        self.coords
+            .do_movement(planet.check_movement_collision(&self.coords, movement));
     }
 }
 
@@ -67,7 +83,7 @@ impl Rabbit {
             sprite: String::from("*"),
             z_index: -1,
             sent_events: vec![],
-            player_coords: Coords::new(0,0),
+            player_coords: Coords::new(0, 0),
         }
     }
 }

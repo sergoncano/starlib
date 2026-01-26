@@ -34,7 +34,8 @@ impl EventDriven for Player {
         }
         let validated_movement = planet.check_movement_collision(&self.coords, movement);
         self.coords.do_movement(validated_movement);
-        self.sent_event.push(Event::PlayerMovedTo(self.coords.clone()));
+        self.sent_event
+            .push(Event::PlayerMovedTo(self.coords.clone()));
     }
 }
 

@@ -45,7 +45,7 @@ impl Planet {
         let mut map_str = String::from("");
         let mut entities = HashMap::new();
         for entity in entity_vector {
-            let coords = entity.get_coords(); 
+            let coords = entity.get_coords();
             if !entities.contains_key(&coords) {
                 entities.insert(coords, entity);
             } else {
@@ -65,7 +65,7 @@ impl Planet {
                     sprite = self.decorations[&current_coords].get_sprite();
                     z_index = self.decorations[&current_coords].get_z_index();
                 }
-                if entities.contains_key(&current_coords)  {
+                if entities.contains_key(&current_coords) {
                     let entity_z_index = entities[&current_coords].get_z_index();
                     if entity_z_index == z_index {
                         panic!("Z fighting during map rendering!");
