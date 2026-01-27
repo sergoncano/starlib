@@ -18,19 +18,22 @@ pub struct Rabbit {
 }
 
 impl EventDriven for Rabbit {
-    fn get_event(&self) -> Vec<Event> {
-        self.sent_events.clone()
+    fn get_event(&mut self) -> Vec<Event> {
+        let sent = self.sent_events.clone();
+        self.sent_events = vec![];
+        sent
     }
 
-    fn handle_event(&mut self, event: &Event) -> Vec<Event> {
+    fn handle_event(&mut self, event: &Event) {
         match event {
             Event::PlayerMovedTo(coords) => self.player_coords = coords.clone(),
+            Event::PlayerInteracted => if self.player_coords == self.coords { self.sent_events.push(Event::ExitLevel); },
+            _ => (),
         }
-        return vec![];
     }
 
     fn take_turn(&mut self, planet: &Planet) {
-        self.sent_events = vec![];
+        if self.sent_events.contains(&Event::ExitLevel) { return; }
         let mut rng = rand::rng();
         let movement: Movement;
         if rng.random() {
@@ -60,6 +63,9 @@ impl EventDriven for Rabbit {
         }
         self.coords
             .do_movement(planet.check_movement_collision(&self.coords, movement));
+        if self.coords == self.player_coords {
+            self.sent_events.push(Event::ShowTip(String::from("E: Catch rabbit")));
+        }
     }
 }
 

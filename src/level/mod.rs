@@ -1,30 +1,57 @@
-use crate::{entities::Entity, event::Event, planet::Planet, terminal};
+use crate::{entities::Entity, event::Event, planet::Planet, renderer};
 
 pub mod earth;
 
-fn game_loop(planet: Planet, mut entities: Vec<Box<dyn Entity>>) {
-    print!("{}", planet.generate_banner());
-    print!("{}", planet.generate_map(&entities));
-    loop {
-        let mut event_queue: Vec<Event> = vec![];
-        for entity in entities.iter_mut() {
-            entity.take_turn(&planet);
-            event_queue.extend(entity.get_event());
-        }
-        loop {
-            let mut reaction_event_queue: Vec<Event> = vec![];
-            for event in &event_queue[..] {
-                for entity in entities.iter_mut() {
-                    reaction_event_queue.extend(entity.handle_event(&event));
+pub struct Level {
+    planet: Planet,
+    entities: Vec<Box<dyn Entity>>,
+}
+
+impl Level {
+    pub fn game_loop(self) {
+        let planet = self.planet;
+        let mut entities = self.entities;
+        renderer::render_frame(&planet, &entities);
+        let mut quit = false;
+        while !quit {
+            let mut event_queue: Vec<Event> = vec![];
+            let mut tip: String = String::from("");
+            let player = entities.get_mut(0).expect("No player entity found.");
+            player.take_turn(&planet);
+            event_queue.extend(player.get_event());
+            for entity in entities.iter_mut() {
+                for event in &event_queue[..] {
+                    entity.handle_event(&event);
                 }
             }
-            event_queue = reaction_event_queue;
-            if event_queue.is_empty() {
-                break;
+            for (i, entity) in entities.iter_mut().enumerate() {
+                if i==0 {continue;}
+                entity.take_turn(&planet);
+                event_queue.extend(entity.get_event());
+            }
+            loop {
+                let mut next_event_queue: Vec<Event> = vec![];
+                for event in &event_queue[..] {
+                    match event {
+                        Event::ExitLevel => quit = true,
+                        Event::ShowTip(s) => tip = s.to_string(),
+                        _ => {
+                            for entity in entities.iter_mut() {
+                                entity.handle_event(&event);
+                                next_event_queue.extend(entity.get_event());
+                            }
+                        },
+                    }
+                }
+                if next_event_queue.is_empty() {
+                    break;
+                }
+                event_queue = next_event_queue;
+            }
+            renderer::render_frame(&planet, &entities);
+            if tip != "" {
+                renderer::render_tip(tip);
             }
         }
-        terminal::clear_screen();
-        print!("{}", planet.generate_banner());
-        print!("{}", planet.generate_map(&entities));
     }
 }

@@ -4,6 +4,7 @@ pub enum Movement {
     Down,
     Left,
     Right,
+    Interact,
     Quit,
     Wait,
     Invalid,

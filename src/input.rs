@@ -26,12 +26,13 @@ pub fn get_input() -> Movement {
 }
 
 fn parse_input_text(input: String) -> Movement {
-    let input_data = &input[..];
+    let input_data = &input.to_lowercase()[..];
     match input_data {
         "w" => Movement::Up,
         "a" => Movement::Left,
         "s" => Movement::Down,
         "d" => Movement::Right,
+        "e" => Movement::Interact,
         "q" => Movement::Quit,
         "timeout" => Movement::Wait,
         _other => Movement::Invalid,

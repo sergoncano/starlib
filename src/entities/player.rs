@@ -17,12 +17,13 @@ pub struct Player {
 }
 
 impl EventDriven for Player {
-    fn get_event(&self) -> Vec<Event> {
-        self.sent_event.clone()
+    fn get_event(&mut self) -> Vec<Event> {
+        let sent = self.sent_event.clone();
+        self.sent_event = vec![];
+        sent
     }
 
-    fn handle_event(&mut self, _: &Event) -> Vec<Event> {
-        vec![]
+    fn handle_event(&mut self, _: &Event){
     }
 
     fn take_turn(&mut self, planet: &Planet) {
@@ -31,6 +32,8 @@ impl EventDriven for Player {
         if movement == Movement::Quit {
             terminal::restore_terminal_properties();
             std::process::exit(0);
+        } else if movement == Movement::Interact {
+            self.sent_event.push(Event::PlayerInteracted);
         }
         let validated_movement = planet.check_movement_collision(&self.coords, movement);
         self.coords.do_movement(validated_movement);

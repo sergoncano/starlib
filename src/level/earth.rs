@@ -1,14 +1,14 @@
 use crate::{
     coords::Coords,
     entities::{Entity, player::Player, rabbit::Rabbit},
-    level::game_loop,
-    planets::earth,
+    level::Level,
+    planet::earth,
 };
 
-pub fn play() {
-    let earth = earth::generate();
+pub fn build() -> Level {
+    let planet = earth::generate();
     let entities = generate_entities();
-    game_loop(earth, entities);
+    Level { planet, entities }
 }
 
 fn generate_entities() -> Vec<Box<dyn Entity>> {

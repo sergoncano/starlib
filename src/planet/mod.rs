@@ -1,7 +1,9 @@
+pub mod earth;
+
 use crate::collider::{self, Collider};
 use crate::coords::Coords;
 use crate::entities::Entity;
-use crate::map;
+use crate::map_util;
 use crate::movement::Movement;
 use crate::renderable::{self, Renderable};
 use std::collections::HashMap;
@@ -20,7 +22,7 @@ impl Planet {
         decorations: Vec<Box<dyn Renderable>>,
         colliders: Vec<Collider>,
     ) -> Planet {
-        map::check_map(&map);
+        map_util::check_map(&map);
         Planet {
             name,
             map,
