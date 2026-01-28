@@ -11,4 +11,5 @@ fn main() {
     terminal::setup_terminal_properties();
     let earth_level = earth::build();
     earth_level.game_loop();
+    terminal::restore_terminal_properties();
 }
