@@ -9,7 +9,7 @@ pub fn get_input() -> Movement {
     use timeout_readwrite::TimeoutReader;
     let stdout = io::stdout();
     let reader = io::stdin();
-    let mut timeout_reader = TimeoutReader::new(reader, Duration::new(3, 0));
+    let mut timeout_reader = TimeoutReader::new(reader, Duration::new(0, 500000000));
     let mut buffer = [0; 1];
     stdout.lock().flush().unwrap();
     let result = timeout_reader.read_exact(&mut buffer);
