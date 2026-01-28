@@ -1,5 +1,4 @@
-use crate::coords::Coords;
-use crate::renderable::Renderable;
+use crate::{interfaces::renderable::Renderable, model::coords::Coords};
 
 struct Decoration {
     sprite: String,
@@ -33,7 +32,7 @@ pub fn decoration_vector_from_map(
                 let decoration = Decoration {
                     sprite: String::from(char),
                     coords: Coords::new(x as i32, y as i32),
-                    z_index: z_index,
+                    z_index,
                 };
                 res.push(Box::from(decoration));
             }

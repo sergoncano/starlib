@@ -1,12 +1,8 @@
 use crate::{
-    coords::Coords,
-    entities::Entity,
-    event::{Event, EventDriven},
-    input,
-    movement::Movement,
+    interfaces::{entity::Entity, event_driven::EventDriven, renderable::Renderable},
+    model::{coords::Coords, event::Event, movement::Movement},
     planet::Planet,
-    renderable::Renderable,
-    terminal,
+    util::{input, terminal},
 };
 
 pub struct Player {
@@ -23,8 +19,7 @@ impl EventDriven for Player {
         sent
     }
 
-    fn handle_event(&mut self, _: &Event){
-    }
+    fn handle_event(&mut self, _: &Event) {}
 
     fn take_turn(&mut self, planet: &Planet) {
         self.sent_event = vec![];

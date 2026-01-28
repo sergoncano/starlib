@@ -1,12 +1,13 @@
 use crate::{
-    coords::Coords,
-    entities::{Entity, player::Player, rabbit::Rabbit},
+    entities::{player::Player, rabbit::Rabbit},
+    interfaces::entity::Entity,
     level::Level,
-    planet::earth,
+    model::coords::Coords,
+    planet,
 };
 
 pub fn build() -> Level {
-    let planet = earth::generate();
+    let planet = planet::earth::generate();
     let entities = generate_entities();
     Level { planet, entities }
 }

@@ -1,7 +1,6 @@
-use crate::coords::Coords;
-use crate::movement::Movement;
 use std::collections::HashMap;
-use std::panic;
+
+use crate::model::{coords::Coords, movement::Movement};
 
 pub struct Collider {
     coords: Coords,
@@ -129,13 +128,14 @@ pub fn collider_map_from_vector(vector: Vec<Collider>) -> HashMap<Coords, Collid
     let mut map: HashMap<Coords, Collider> = HashMap::new();
     for collider in vector {
         let coords = collider.get_coords();
-        if !map.contains_key(&coords) {
-            map.insert(coords, collider);
-            continue;
-        } else {
-            let existing_collider = map.get_mut(&coords).unwrap();
-            *existing_collider = collider.add(existing_collider);
-        }
+        let entry = map.entry(coords.clone()).or_insert(Collider {
+            coords: coords.clone(),
+            collides_entering_from_up: false,
+            collides_entering_from_left: false,
+            collides_entering_from_down: false,
+            collides_entering_from_right: false,
+        });
+        *entry = entry.add(&collider);
     }
     map
 }

@@ -1,4 +1,4 @@
-use crate::{entities::Entity, event::Event, planet::Planet, renderer};
+use crate::{interfaces::entity::Entity, model::event::Event, planet::Planet, util::renderer};
 
 pub mod earth;
 
@@ -21,11 +21,13 @@ impl Level {
             event_queue.extend(player.get_event());
             for entity in entities.iter_mut() {
                 for event in &event_queue[..] {
-                    entity.handle_event(&event);
+                    entity.handle_event(event);
                 }
             }
             for (i, entity) in entities.iter_mut().enumerate() {
-                if i==0 {continue;}
+                if i == 0 {
+                    continue;
+                }
                 entity.take_turn(&planet);
                 event_queue.extend(entity.get_event());
             }
@@ -37,10 +39,10 @@ impl Level {
                         Event::ShowTip(s) => tip = s.to_string(),
                         _ => {
                             for entity in entities.iter_mut() {
-                                entity.handle_event(&event);
+                                entity.handle_event(event);
                                 next_event_queue.extend(entity.get_event());
                             }
-                        },
+                        }
                     }
                 }
                 if next_event_queue.is_empty() {
@@ -49,7 +51,7 @@ impl Level {
                 event_queue = next_event_queue;
             }
             renderer::render_frame(&planet, &entities);
-            if tip != "" {
+            if !tip.is_empty() {
                 renderer::render_tip(tip);
             }
         }

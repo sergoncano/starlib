@@ -1,12 +1,9 @@
 use rand::Rng;
 
 use crate::{
-    coords::Coords,
-    entities::Entity,
-    event::{Event, EventDriven},
-    movement::Movement,
+    interfaces::{entity::Entity, event_driven::EventDriven, renderable::Renderable},
+    model::{coords::Coords, event::Event, movement::Movement},
     planet::Planet,
-    renderable::Renderable,
 };
 
 pub struct Rabbit {
@@ -27,13 +24,19 @@ impl EventDriven for Rabbit {
     fn handle_event(&mut self, event: &Event) {
         match event {
             Event::PlayerMovedTo(coords) => self.player_coords = coords.clone(),
-            Event::PlayerInteracted => if self.player_coords == self.coords { self.sent_events.push(Event::ExitLevel); },
+            Event::PlayerInteracted => {
+                if self.player_coords == self.coords {
+                    self.sent_events.push(Event::ExitLevel);
+                }
+            }
             _ => (),
         }
     }
 
     fn take_turn(&mut self, planet: &Planet) {
-        if self.sent_events.contains(&Event::ExitLevel) { return; }
+        if self.sent_events.contains(&Event::ExitLevel) {
+            return;
+        }
         let mut rng = rand::rng();
         let movement: Movement;
         if rng.random() {
@@ -48,23 +51,22 @@ impl EventDriven for Rabbit {
             } else {
                 movement = Movement::Left;
             }
-        } else {
-            if self.coords.get_y() > self.player_coords.get_y() {
-                movement = Movement::Down;
-            } else if self.coords.get_y() == self.player_coords.get_y() {
-                movement = if rng.random() || rng.random() {
-                    Movement::Up
-                } else {
-                    Movement::Down
-                };
+        } else if self.coords.get_y() > self.player_coords.get_y() {
+            movement = Movement::Down;
+        } else if self.coords.get_y() == self.player_coords.get_y() {
+            movement = if rng.random() || rng.random() {
+                Movement::Up
             } else {
-                movement = Movement::Up;
-            }
+                Movement::Down
+            };
+        } else {
+            movement = Movement::Up;
         }
         self.coords
             .do_movement(planet.check_movement_collision(&self.coords, movement));
         if self.coords == self.player_coords {
-            self.sent_events.push(Event::ShowTip(String::from("E: Catch rabbit")));
+            self.sent_events
+                .push(Event::ShowTip(String::from("E: Catch rabbit")));
         }
     }
 }

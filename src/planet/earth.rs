@@ -1,6 +1,7 @@
-use crate::collider;
-use crate::decoration;
-use crate::planet::Planet;
+use crate::{
+    model::{collider::collider_vector_from_map, decoration},
+    planet::Planet,
+};
 
 pub fn generate() -> Planet {
     let map = [
@@ -13,7 +14,7 @@ pub fn generate() -> Planet {
 
     let leaves = decoration::decoration_vector_from_map(&map, '@', 1);
 
-    let logs = collider::collider_vector_from_map(&map, '|');
+    let logs = collider_vector_from_map(&map, '|');
 
     let earth: Planet = Planet::new("Earth", Vec::from(map), leaves, logs);
 

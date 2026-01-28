@@ -1,4 +1,4 @@
-use crate::movement::Movement;
+use crate::model::movement::Movement;
 
 #[derive(Hash, PartialEq, Eq, Clone, Debug)]
 pub struct Coords {

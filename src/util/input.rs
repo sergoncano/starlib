@@ -1,4 +1,5 @@
-use crate::movement::Movement;
+use crate::model::movement::Movement;
+
 pub fn get_input() -> Movement {
     use std::time::Duration;
     use std::{
@@ -15,10 +16,7 @@ pub fn get_input() -> Movement {
     let string = match result {
         Ok(_) => {
             let key = String::from_utf8(buffer.to_vec());
-            match key {
-                Ok(string) => string,
-                Err(_error) => String::from(""),
-            }
+            key.unwrap_or_default()
         }
         Err(_) => String::from("timeout"),
     };

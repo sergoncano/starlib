@@ -1,18 +1,11 @@
-pub mod collider;
-pub mod coords;
-pub mod decoration;
 pub mod entities;
-pub mod event;
-pub mod input;
+pub mod interfaces;
 pub mod level;
-pub mod map_util;
-pub mod movement;
+pub mod model;
 pub mod planet;
-pub mod renderable;
-pub mod renderer;
-pub mod terminal;
+pub mod util;
 
-use level::earth;
+use crate::{level::earth, util::terminal};
 
 fn main() {
     terminal::setup_terminal_properties();

@@ -1,12 +1,19 @@
 pub mod earth;
 
-use crate::collider::{self, Collider};
-use crate::coords::Coords;
-use crate::entities::Entity;
-use crate::map_util;
-use crate::movement::Movement;
-use crate::renderable::{self, Renderable};
 use std::collections::HashMap;
+
+use crate::{
+    interfaces::{
+        entity::Entity,
+        renderable::{self, Renderable},
+    },
+    model::{
+        collider::{self, Collider},
+        coords::Coords,
+        movement::Movement,
+    },
+    util::map,
+};
 
 pub struct Planet {
     name: &'static str,
@@ -22,7 +29,7 @@ impl Planet {
         decorations: Vec<Box<dyn Renderable>>,
         colliders: Vec<Collider>,
     ) -> Planet {
-        map_util::check_map(&map);
+        map::check_map(&map);
         Planet {
             name,
             map,
@@ -45,17 +52,15 @@ impl Planet {
 
     pub fn generate_map(&self, entity_vector: &Vec<Box<dyn Entity>>) -> String {
         let mut map_str = String::from("");
-        let mut entities = HashMap::new();
+        let mut entities: HashMap<Coords, &Box<dyn Entity>> = HashMap::new();
         for entity in entity_vector {
             let coords = entity.get_coords();
-            if !entities.contains_key(&coords) {
+            if !entities.contains_key(&coords)
+                || entities[&coords].get_z_index() < entity.get_z_index()
+            {
                 entities.insert(coords, entity);
-            } else {
-                if entities[&coords].get_z_index() < entity.get_z_index() {
-                    entities.insert(coords, entity);
-                } else if entities[&coords].get_z_index() == entity.get_z_index() {
-                    panic!("Z fighting during map rendering!");
-                }
+            } else if entities[&coords].get_z_index() == entity.get_z_index() {
+                panic!("Z fighting during map rendering!");
             }
         }
         for (y, line) in self.map.iter().enumerate() {
