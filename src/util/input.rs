@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use crate::model::movement::Movement;
 
 pub fn get_input() -> Movement {
@@ -34,5 +36,21 @@ fn parse_input_text(input: String) -> Movement {
         "q" => Movement::Quit,
         "timeout" => Movement::Wait,
         _other => Movement::Invalid,
+    }
+}
+
+pub fn get_menu_input() -> Movement {
+    use std::io;
+    let mut buffer = [0; 1];
+    let mut stdin = io::stdin();
+    loop {
+        let _ = stdin.read_exact(&mut buffer);
+        let key = String::from_utf8(buffer.to_vec()).unwrap_or_default();
+        return match &key[..] {
+            "w" => Movement::Up,
+            "s" => Movement::Down,
+            "e" => Movement::Interact,
+            _ =>   continue,
+        };
     }
 }
