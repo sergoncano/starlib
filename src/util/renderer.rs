@@ -1,3 +1,4 @@
+//TODO: Create centered_render function
 use std::cmp;
 
 use crate::{interface::entity::Entity, stage::planet::Planet, util::terminal};
@@ -46,5 +47,19 @@ pub fn render_menu(header_text: &String, options: &Vec<String>, selected: usize)
             format!("{}{}", if i == selected { "·" } else { " " }, option)
         );
         print!("\n\n");
+    }
+}
+
+pub fn render_title(title: String, subtitle: Option<String>) {
+    terminal::clear_screen();
+    let (width_u16, height_u16) = crossterm::terminal::size().unwrap_or((0, 0));
+    let width = width_u16 as usize;
+    for _ in 0..(height_u16/2)- if subtitle.is_some() { 2 } else { 1 } {
+        println!();
+    }
+    println!("{: ^width$}", title);
+    if subtitle.is_some() {
+        println!();
+        println!("{: ^width$}", subtitle.unwrap());
     }
 }
