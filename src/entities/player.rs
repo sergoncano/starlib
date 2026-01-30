@@ -2,7 +2,7 @@ use crate::{
     interfaces::{entity::Entity, event_driven::EventDriven, renderable::Renderable},
     model::{coords::Coords, event::Event, movement::Movement},
     planet::Planet,
-    util::{input, terminal},
+    util::input,
 };
 
 pub struct Player {
@@ -24,10 +24,7 @@ impl EventDriven for Player {
     fn take_turn(&mut self, planet: &Planet) {
         self.sent_event = vec![];
         let movement = input::get_input();
-        if movement == Movement::Quit {
-            terminal::restore_terminal_properties();
-            std::process::exit(0);
-        } else if movement == Movement::Interact {
+        if movement == Movement::Interact {
             self.sent_event.push(Event::PlayerInteracted);
         }
         let validated_movement = planet.check_movement_collision(&self.coords, movement);
