@@ -1,9 +1,9 @@
 use rand::Rng;
 
-use crate::{
-    interfaces::{entity::Entity, event_driven::EventDriven, renderable::Renderable},
+use starlib::{
+    interface::{entity::Entity, event_driven::EventDriven, renderable::Renderable},
     model::{coords::Coords, event::Event, movement::Movement},
-    planet::Planet,
+    stage::planet::Planet,
 };
 
 pub struct Rabbit {

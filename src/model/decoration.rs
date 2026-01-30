@@ -1,4 +1,4 @@
-use crate::{interfaces::renderable::Renderable, model::coords::Coords};
+use crate::{interface::renderable::Renderable, model::coords::Coords};
 
 struct Decoration {
     sprite: String,

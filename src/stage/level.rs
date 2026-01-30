@@ -1,6 +1,6 @@
-use crate::{interfaces::entity::Entity, model::event::Event, planet::Planet, util::renderer};
-
-pub mod earth;
+use crate::{
+    interface::entity::Entity, model::event::Event, stage::planet::Planet, util::renderer,
+};
 
 pub struct Level {
     planet: Planet,
@@ -8,6 +8,10 @@ pub struct Level {
 }
 
 impl Level {
+    pub fn new(planet: Planet, entities: Vec<Box<dyn Entity>>) -> Level {
+        Level { planet, entities }
+    }
+
     pub fn game_loop(self) {
         let planet = self.planet;
         let mut entities = self.entities;

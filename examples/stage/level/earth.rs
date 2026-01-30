@@ -1,15 +1,15 @@
-use crate::{
-    entities::{player::Player, rabbit::Rabbit},
-    interfaces::entity::Entity,
-    level::Level,
+use starlib::{
+    interface::entity::{Entity, Player},
     model::coords::Coords,
-    planet,
+    stage::level::Level,
 };
 
+use crate::{entities::rabbit::Rabbit, stage::planet::earth};
+
 pub fn build() -> Level {
-    let planet = planet::earth::generate();
+    let planet = earth::generate();
     let entities = generate_entities();
-    Level { planet, entities }
+    Level::new(planet, entities)
 }
 
 fn generate_entities() -> Vec<Box<dyn Entity>> {

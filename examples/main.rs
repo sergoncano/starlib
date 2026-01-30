@@ -1,12 +1,8 @@
-pub mod entities;
-pub mod interfaces;
-pub mod level;
-pub mod model;
-pub mod planet;
-pub mod ui;
-pub mod util;
+mod entities;
+mod stage;
 
-use crate::{level::earth, ui::menu::Menu, util::terminal};
+use crate::stage::level::earth;
+use starlib::{ui::menu::Menu, util::terminal};
 
 fn main() {
     terminal::setup_terminal_properties();
@@ -18,7 +14,7 @@ fn main() {
             0 => {
                 let earth_level = earth::build();
                 earth_level.game_loop();
-            },
+            }
             1 => {
                 break;
             }

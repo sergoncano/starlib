@@ -1,4 +1,4 @@
-use crate::{model::event::Event, planet::Planet};
+use crate::{model::event::Event, stage::planet::Planet};
 
 pub trait EventDriven {
     fn get_event(&mut self) -> Vec<Event>;

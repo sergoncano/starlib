@@ -1,9 +1,7 @@
-pub mod earth;
-
 use std::collections::HashMap;
 
 use crate::{
-    interfaces::{
+    interface::{
         entity::Entity,
         renderable::{self, Renderable},
     },

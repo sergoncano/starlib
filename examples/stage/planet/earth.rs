@@ -1,6 +1,6 @@
-use crate::{
+use starlib::{
     model::{collider::collider_vector_from_map, decoration},
-    planet::Planet,
+    stage::planet::Planet,
 };
 
 pub fn generate() -> Planet {

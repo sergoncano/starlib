@@ -50,7 +50,7 @@ pub fn get_menu_input() -> Movement {
             "w" => Movement::Up,
             "s" => Movement::Down,
             "e" => Movement::Interact,
-            _ =>   continue,
+            _ => continue,
         };
     }
 }
