@@ -6,9 +6,9 @@ Import the neccessary modules, create a `Planet` (which is essentially the grid 
 Create any entities needed implementing the `EventDriven` trait. Create a `Level` with the planet and the entities in a vector.
 Then it's done, whenever you run `level.game_loop()` the created stage will run. Menus and titles may be used for extra flavor. 
   
-To do:
-- Make control flow (exit and tip rendering) event-independent to give the user complete control over which event enum to use.
-- Process entities' movement concurrently instead of using input timeouts
+### To do:
+- Create `InternalEvent` enum and separate it from user-defined enums.
+- Concurrently process events in the queue through a std::mpsc
 - Add QoL collider constructors
 - Create a few more examples
 - Upload to crates.io
