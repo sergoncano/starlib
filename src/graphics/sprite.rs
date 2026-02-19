@@ -36,6 +36,25 @@ impl Sprite {
             character: string.chars().next().unwrap(),
         }
     }
+
+    /// Get the sprite that should be rendered according to their z-index.
+    /// Panics if both have the same z-index. The user must take care of z-fighting themselves.
+    /// # Panics
+    /// ```should_panic
+    /// use starlib::Sprite;
+    /// let a = Sprite::new('A', 2);
+    /// let b = Sprite::new('B', 2);
+    /// let rendered = a.overlap(&b);
+    /// ```
+    pub fn overlap<'a> (&'a self, other: &'a Sprite) -> &'a Self {
+        if self.z_index == other.z_index {
+            panic!("Z-fighting between {:?} and {:?}", self, other);
+        } else if self.z_index > other.z_index {
+            self
+        } else {
+            other
+        }
+    }
 }
 
 #[cfg(test)]
@@ -63,5 +82,15 @@ mod tests {
     #[should_panic]
     fn test_builder_fail() {
         Sprite::build("Hello, World!", 0);
+    }
+    
+    #[test]
+    fn test_overlap() {
+        let x = Sprite::build("X", 2);
+        let y = Sprite::build("Y", 1);
+        assert_eq!(&x, y.overlap(&x));
+        let a = Sprite::build("A", 2);
+        let b = Sprite::build("B", 1);
+        assert_eq!(&a, a.overlap(&b));
     }
 }
