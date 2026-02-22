@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sprite {
     character: char,
     z_index: i32,
@@ -44,9 +44,9 @@ impl Sprite {
     /// use starlib::Sprite;
     /// let a = Sprite::new('A', 2);
     /// let b = Sprite::new('B', 2);
-    /// let rendered = a.overlap(&b);
+    /// let rendered = a.overlap(b);
     /// ```
-    pub fn overlap<'a> (&'a self, other: &'a Sprite) -> &'a Self {
+    pub fn overlap (self, other: Sprite) -> Self {
         if self.z_index == other.z_index {
             panic!("Z-fighting between {:?} and {:?}", self, other);
         } else if self.z_index > other.z_index {
@@ -87,10 +87,12 @@ mod tests {
     #[test]
     fn test_overlap() {
         let x = Sprite::build("X", 2);
+        let x2 = x.clone();
         let y = Sprite::build("Y", 1);
-        assert_eq!(&x, y.overlap(&x));
+        assert_eq!(x, y.overlap(x2));
         let a = Sprite::build("A", 2);
+        let a2 = a.clone();
         let b = Sprite::build("B", 1);
-        assert_eq!(&a, a.overlap(&b));
+        assert_eq!(a, a2.overlap(b));
     }
 }

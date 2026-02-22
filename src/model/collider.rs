@@ -9,7 +9,7 @@ pub struct Collider {
 }
 
 impl Collider {
-    fn new(north: bool, south: bool, east: bool, west: bool, ) -> Self {
+    pub fn new(north: bool, south: bool, east: bool, west: bool, ) -> Self {
         Collider { north, south, east, west }
     }
 }
