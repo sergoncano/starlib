@@ -1,14 +1,14 @@
 # Starlib
-Starlib is a library for grid-based TUI game development. It takes care of collisions, rendering layers, creating menus and titles, controlling the flow of events among entities in the game and also provides nice abstractions for certain other aspects of a game.  
 
-### Quickstart
-Import the neccessary modules, create a `Planet` (which is essentially the grid the game is played in) and add in the decorations and the colliders in the constructor. The function `collider_vector_from_map` is quite useful for this.
-Create any entities needed implementing the `EventDriven` trait. Create a `Level` with the planet and the entities in a vector.
-Then it's done, whenever you run `level.game_loop()` the created stage will run. Menus and titles may be used for extra flavor. 
-  
-### To do:
+Starlib is a library for grid-based TUI game development. It takes care of collisions, rendering layers, creating menus and titles, controlling the flow of events among entities in the game and also provides nice abstractions for certain other aspects of a game.
+
+### Refactor
+
+This branch is a brand new version of the library. I didn't feel like the code in the main branch was maintainable or clean enough for me to publish it as a crate. This branch aims to address the architectural issues in the original one while also adding more functionality. Eventually, it will replace main.
+
+### Roadmap:
+
+- Non-blocking global input .
 - Create `InternalEvent` enum and separate it from user-defined enums.
-- Concurrently process events in the queue through a std::mpsc
-- Add QoL collider constructors
-- Create a few more examples
+- Create time-based event handling.
 - Upload to crates.io
