@@ -40,8 +40,12 @@ impl Stage {
         map
     }
 
-    pub fn get_collider(self, coords: Coords) -> Option<Collider> {
-        Option::<&Collider>::cloned(self.colliders.get(&coords))
+    pub fn get_collider(self, coords: &Coords) -> Option<Collider> {
+        Option::<&Collider>::cloned(self.colliders.get(coords))
+    }
+
+    pub fn set_collider(&mut self, coords: Coords, collider: Collider) {
+        self.colliders.insert(coords, collider);
     }
 }
 
@@ -84,6 +88,21 @@ mod tests {
             vec![],
             vec![(coords, collider)],
         );
-        assert_eq!(new_collider, stage.get_collider(new_coords).expect("get_collider() returned None."));
+        assert_eq!(new_collider, stage.get_collider(&new_coords).expect("get_collider() returned None."));
+    }
+
+    #[test]
+    fn test_set_collider() {
+        let collider = Collider::try_from("n-e-").unwrap();
+        let collider2 = Collider::try_from("n--w").unwrap();
+        let coords = Coords::new(2,1);
+        let mut stage = Stage::build(
+            String::from("Test stage"),
+            vec!["..@", "..|", "o.."].iter().map(|&s| String::from(s)).collect(),
+            vec![],
+            vec![(coords.clone(), collider)],
+        );
+        stage.set_collider(coords.clone(), collider2.clone());
+        assert_eq!(stage.get_collider(&coords), Some(collider2));
     }
 }
