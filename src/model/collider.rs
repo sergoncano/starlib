@@ -9,14 +9,19 @@ pub struct Collider {
 }
 
 impl Collider {
-    pub fn new(north: bool, south: bool, east: bool, west: bool, ) -> Self {
-        Collider { north, south, east, west }
+    pub fn new(north: bool, south: bool, east: bool, west: bool) -> Self {
+        Collider {
+            north,
+            south,
+            east,
+            west,
+        }
     }
 }
 
 impl Add for Collider {
     type Output = Self;
-    
+
     fn add(self, other: Self) -> Self::Output {
         Self {
             north: self.north || other.north,
@@ -81,23 +86,23 @@ mod tests {
 
     #[test]
     fn test_partial_eq() {
-        let north1 = Collider::new(true, false, false, false); 
-        let north2 = Collider::new(true, false, false, false); 
+        let north1 = Collider::new(true, false, false, false);
+        let north2 = Collider::new(true, false, false, false);
         assert_eq!(north1, north2);
-        let west = Collider::new(false, false, false, true); 
+        let west = Collider::new(false, false, false, true);
         assert_ne!(north1, west);
     }
 
     #[test]
     fn test_try_from() {
         let north_south_from = Collider::try_from("ns--").unwrap_or_else(|e| panic!("{e}"));
-        let north_south = Collider::new(true,true,false,false);
+        let north_south = Collider::new(true, true, false, false);
         assert_eq!(north_south, north_south_from);
         let east_from = Collider::try_from("--e-").unwrap_or_else(|e| panic!("{e}"));
-        let east = Collider::new(false,false,true,false);
+        let east = Collider::new(false, false, true, false);
         assert_eq!(east, east_from);
         let void_from = Collider::try_from("----").unwrap_or_else(|e| panic!("{e}"));
-        let void = Collider::new(false,false,false,false);
+        let void = Collider::new(false, false, false, false);
         assert_eq!(void, void_from);
     }
 

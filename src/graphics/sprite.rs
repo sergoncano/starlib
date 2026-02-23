@@ -8,7 +8,7 @@ impl Sprite {
     pub fn new(character: char, z_index: i32) -> Self {
         Self { z_index, character }
     }
-    
+
     /// Creates a sprite from a string slice.
     /// The slice is cloned so lifetimes are irrelevant.
     /// The slice *must* be 1 character long, or the function will panic.
@@ -20,7 +20,7 @@ impl Sprite {
     /// assert_eq!(sprite1, sprite2);
     /// ```
     /// # Panics
-    /// The function panics when the slice is not 1 character long (Note character: utf 
+    /// The function panics when the slice is not 1 character long (Note character: utf
     /// characters aren't 1 byte long, but this function will work on them. Likewise, it will not
     /// accept pieces of a utf character).
     /// ```should_panic
@@ -46,7 +46,7 @@ impl Sprite {
     /// let b = Sprite::new('B', 2);
     /// let rendered = a.overlap(b);
     /// ```
-    pub fn overlap (self, other: Sprite) -> Self {
+    pub fn overlap(self, other: Sprite) -> Self {
         if self.z_index == other.z_index {
             panic!("Z-fighting between {:?} and {:?}", self, other);
         } else if self.z_index > other.z_index {
@@ -83,7 +83,7 @@ mod tests {
     fn test_builder_fail() {
         Sprite::build("Hello, World!", 0);
     }
-    
+
     #[test]
     fn test_overlap() {
         let x = Sprite::build("X", 2);

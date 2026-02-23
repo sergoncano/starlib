@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
-use crate::{Sprite, model::{collider::Collider, coords::Coords}};
+use crate::{
+    Sprite,
+    model::{collider::Collider, coords::Coords},
+};
 
-pub struct Stage {
+pub(crate) struct Stage {
     name: String,
     map: Vec<String>,
     decorations: HashMap<Coords, Sprite>,
@@ -10,10 +13,15 @@ pub struct Stage {
 }
 
 impl Stage {
-    pub fn build(name: String, map: Vec<String>, decorations: Vec<(Coords, Sprite)>, colliders: Vec<(Coords, Collider)>) -> Self {
+    pub fn build(
+        name: String,
+        map: Vec<String>,
+        decorations: Vec<(Coords, Sprite)>,
+        colliders: Vec<(Coords, Collider)>,
+    ) -> Self {
         let mut map_is_valid = true;
         for (line, prev_line) in map.iter().zip(map.iter().skip(1)) {
-            map_is_valid  = map_is_valid && line.len() == prev_line.len();
+            map_is_valid = map_is_valid && line.len() == prev_line.len();
         }
         assert!(map_is_valid, "Map of stage {name} is not rectangular!");
         Self {
@@ -27,16 +35,26 @@ impl Stage {
     fn decoration_vector_to_hashmap(decorations: Vec<(Coords, Sprite)>) -> HashMap<Coords, Sprite> {
         let mut map: HashMap<Coords, Sprite> = HashMap::new();
         for (coords, sprite) in decorations {
-            map.entry(coords).and_modify(|c| { c.clone().overlap(sprite.clone()); }).or_insert(sprite);
-        };
+            map.entry(coords)
+                .and_modify(|c| {
+                    c.clone().overlap(sprite.clone());
+                })
+                .or_insert(sprite);
+        }
         map
     }
 
-    fn collider_vector_to_hashmap(decorations: Vec<(Coords, Collider)>) -> HashMap<Coords, Collider> {
+    fn collider_vector_to_hashmap(
+        decorations: Vec<(Coords, Collider)>,
+    ) -> HashMap<Coords, Collider> {
         let mut map: HashMap<Coords, Collider> = HashMap::new();
         for (coords, collider) in decorations {
-            map.entry(coords).and_modify(|c| { *c = c.clone() + collider.clone(); }).or_insert(collider);
-        };
+            map.entry(coords)
+                .and_modify(|c| {
+                    *c = c.clone() + collider.clone();
+                })
+                .or_insert(collider);
+        }
         map
     }
 
@@ -59,7 +77,10 @@ mod tests {
         let position = Coords::new(2, 0);
         let _stage = Stage::build(
             String::from("Test stage"),
-            vec!["...", "..|", "o.."].iter().map(|&s| String::from(s)).collect(),
+            vec!["...", "..|", "o.."]
+                .iter()
+                .map(|&s| String::from(s))
+                .collect(),
             vec![(position, decoration)],
             vec![],
         );
@@ -70,7 +91,10 @@ mod tests {
     fn name() {
         let _stage = Stage::build(
             String::from("Fail stage"),
-            vec!["..", "..|", "o.."].iter().map(|&s| String::from(s)).collect(),
+            vec!["..", "..|", "o.."]
+                .iter()
+                .map(|&s| String::from(s))
+                .collect(),
             vec![],
             vec![],
         );
@@ -79,26 +103,37 @@ mod tests {
     #[test]
     fn test_get_collider() {
         let collider = Collider::try_from("n-e-").unwrap();
-        let coords = Coords::new(2,1);
+        let coords = Coords::new(2, 1);
         let new_collider = collider.clone();
-        let new_coords= coords.clone();
+        let new_coords = coords.clone();
         let stage = Stage::build(
             String::from("Test stage"),
-            vec!["..@", "..|", "o.."].iter().map(|&s| String::from(s)).collect(),
+            vec!["..@", "..|", "o.."]
+                .iter()
+                .map(|&s| String::from(s))
+                .collect(),
             vec![],
             vec![(coords, collider)],
         );
-        assert_eq!(new_collider, stage.get_collider(&new_coords).expect("get_collider() returned None."));
+        assert_eq!(
+            new_collider,
+            stage
+                .get_collider(&new_coords)
+                .expect("get_collider() returned None.")
+        );
     }
 
     #[test]
     fn test_set_collider() {
         let collider = Collider::try_from("n-e-").unwrap();
         let collider2 = Collider::try_from("n--w").unwrap();
-        let coords = Coords::new(2,1);
+        let coords = Coords::new(2, 1);
         let mut stage = Stage::build(
             String::from("Test stage"),
-            vec!["..@", "..|", "o.."].iter().map(|&s| String::from(s)).collect(),
+            vec!["..@", "..|", "o.."]
+                .iter()
+                .map(|&s| String::from(s))
+                .collect(),
             vec![],
             vec![(coords.clone(), collider)],
         );
