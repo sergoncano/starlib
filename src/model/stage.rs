@@ -5,7 +5,7 @@ use crate::{
     model::{collider::Collider, coords::Coords},
 };
 
-pub(crate) struct Stage {
+pub struct Stage {
     name: String,
     map: Vec<String>,
     decorations: HashMap<Coords, Sprite>,
