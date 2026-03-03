@@ -55,6 +55,14 @@ impl Sprite {
             other
         }
     }
+
+    pub(crate) fn get_z_index(&self) -> i32 {
+        self.z_index
+    }
+
+    pub(crate) fn get_character(&self) -> char {
+        self.character
+    }
 }
 
 #[cfg(test)]

@@ -4,3 +4,4 @@ pub mod entity;
 pub mod event;
 pub mod level;
 pub mod stage;
+pub mod tip;

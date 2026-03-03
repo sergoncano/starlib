@@ -1,6 +1,6 @@
-use std::time::SystemTime;
+use std::{panic::catch_unwind, time::{Duration, Instant}};
 
-use crate::model::{entity::Entity, event::Event, stage::Stage};
+use crate::{graphics::renderer::render_game, model::{entity::Entity, event::Event, stage::Stage, tip::Tip}};
 
 pub struct Level<T> {
     stage: Stage,
@@ -13,23 +13,23 @@ impl<T> Level<T> {
     }
 
     pub fn run(&mut self) -> i32 {
-        let start_time = SystemTime::now();
-        let mut turns: Vec<u128> = self.entities.iter().map(|_e| 0).collect();
+        let mut delta_time = Duration::ZERO;
+        let mut tip = Tip::new(String::from(""), Duration::ZERO, 0);
+        let mut remaining_turn_time: Vec<Duration> = self.entities.iter().map(|e| e.get_turn_delay()).collect();
         loop {
+            let ti = Instant::now();
+            tip.ellapse(delta_time);
             let mut event_buffer = vec![];
             for i in 0..self.entities.len() {
-                let turn = start_time
-                    .elapsed()
-                    .expect("system clock went backwards!")
-                    .as_millis()
-                    % self.entities.get(i).unwrap().get_turn_delay().as_millis();
-
-                if &turn != turns.get(i).unwrap() {
+                let mut time = remaining_turn_time.get(i).unwrap().clone();
+                time = catch_unwind(|| { time - delta_time }).unwrap_or(Duration::ZERO);
+                if time == Duration::ZERO {
                     let returned_events =
                         self.entities.get_mut(i).unwrap().take_turn(&mut self.stage);
                     event_buffer.extend(returned_events);
-                    turns[i] = turn;
+                    time = self.entities.get(i).unwrap().get_turn_delay();
                 }
+                remaining_turn_time[i] = time;
             }
             loop {
                 let mut new_event_buffer = vec![];
@@ -40,10 +40,13 @@ impl<T> Level<T> {
                                 new_event_buffer
                                     .extend(entity.handle_event(&user_event, &mut self.stage));
                             }
-                        }
+                        },
+                        Event::Tip(t) => {
+                            tip = t.overlap(tip);
+                        },
                         Event::ExitLevel(exit_code) => {
                             return exit_code;
-                        }
+                        },
                     }
                 }
                 event_buffer = new_event_buffer;
@@ -51,6 +54,9 @@ impl<T> Level<T> {
                     break;
                 }
             }
+            render_game(&self.stage.map, &self.stage.decorations, &self.entities.iter().map(|e| e.get_render()).collect(), if !(&tip).has_expired() { Some(tip.clone()) } else { None } );
+            let tf = Instant::now();
+            delta_time = tf - ti;
         }
     }
 }
@@ -59,19 +65,13 @@ impl<T> Level<T> {
 mod tests {
     use std::time::Duration;
 
+    use crate::{Sprite, graphics::map::Map};
+
     use super::*;
 
     #[test]
     fn test_constructor() {
-        let stage = Stage::build(
-            String::from("Test stage"),
-            vec!["...", "...", "..."]
-                .iter()
-                .map(|&s| String::from(s))
-                .collect(),
-            vec![],
-            vec![],
-        );
+        let stage = Stage::build(String::from("Test stage"), Map::test_map(), vec![], vec![]);
         let _level: Level<i32> = Level::new(stage, vec![]);
     }
 
@@ -106,17 +106,12 @@ mod tests {
             fn get_turn_delay(&self) -> std::time::Duration {
                 Duration::from_secs(1)
             }
-        };
+            fn get_render(&self) -> (crate::model::coords::Coords, crate::Sprite) {
+                (crate::model::coords::Coords::new(0,0),Sprite::build("o", 3))
+            }
+        }
 
-        let stage = Stage::build(
-            String::from("Test stage"),
-            vec!["...", "...", "..."]
-                .iter()
-                .map(|&s| String::from(s))
-                .collect(),
-            vec![],
-            vec![],
-        );
+        let stage = Stage::build(String::from("Test stage"), Map::test_map(), vec![], vec![]);
         let mut level: Level<i32> = Level::new(stage, vec![Box::new(TestEntity::new())]);
         assert_eq!(level.run(), EXIT_CODE);
     }
