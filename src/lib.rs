@@ -1,5 +1,6 @@
 pub mod graphics;
 pub mod model;
+pub mod util;
 
 pub use graphics::map::Map;
 pub use graphics::renderer as renderer;
