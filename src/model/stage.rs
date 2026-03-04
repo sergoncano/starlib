@@ -7,7 +7,6 @@ use crate::{
 };
 
 pub struct Stage {
-    _name: String,
     pub(crate) map: Map,
     pub(crate) decorations: HashMap<Coords, Sprite>,
     colliders: HashMap<Coords, Collider>,
@@ -15,13 +14,11 @@ pub struct Stage {
 
 impl Stage {
     pub fn build(
-        name: String,
         map: Map,
         decorations: Vec<(Coords, Sprite)>,
         colliders: Vec<(Coords, Collider)>,
     ) -> Self {
         Self {
-            _name: name,
             map,
             decorations: Self::decoration_vector_to_hashmap(decorations),
             colliders: Self::collider_vector_to_hashmap(colliders),
@@ -72,7 +69,6 @@ mod tests {
         let decoration = Sprite::build("@", 2);
         let position = Coords::new(2, 0);
         let _stage = Stage::build(
-            String::from("Test stage"),
             Map::test_map(),
             vec![(position, decoration)],
             vec![],
@@ -86,7 +82,6 @@ mod tests {
         let new_collider = collider.clone();
         let new_coords = coords.clone();
         let stage = Stage::build(
-            String::from("Test stage"),
             Map::test_map(),
             vec![],
             vec![(coords, collider)],
@@ -105,7 +100,6 @@ mod tests {
         let collider2 = Collider::try_from("n--w").unwrap();
         let coords = Coords::new(2, 1);
         let mut stage = Stage::build(
-            String::from("Test stage"),
             Map::test_map(),
             vec![],
             vec![(coords.clone(), collider)],

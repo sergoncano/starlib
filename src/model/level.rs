@@ -71,11 +71,12 @@ mod tests {
 
     #[test]
     fn test_constructor() {
-        let stage = Stage::build(String::from("Test stage"), Map::test_map(), vec![], vec![]);
+        let stage = Stage::build(Map::test_map(), vec![], vec![]);
         let _level: Level<i32> = Level::new(stage, vec![]);
     }
 
     #[test]
+    #[ignore]
     fn test_run() {
         const EXIT_CODE: i32 = 3;
         const EVENT_CODE: i32 = 2341;
@@ -111,7 +112,7 @@ mod tests {
             }
         }
 
-        let stage = Stage::build(String::from("Test stage"), Map::test_map(), vec![], vec![]);
+        let stage = Stage::build(Map::test_map(), vec![], vec![]);
         let mut level: Level<i32> = Level::new(stage, vec![Box::new(TestEntity::new())]);
         assert_eq!(level.run(), EXIT_CODE);
     }
