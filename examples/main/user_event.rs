@@ -1,1 +1,6 @@
-pub enum UserEvent {}
+use starlib::Coords;
+
+pub enum UserEvent {
+    PlayerMoved(Coords),
+    CatchRabbit,
+}

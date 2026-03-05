@@ -43,9 +43,11 @@ impl Tip {
     }
 
     /// Reduce the duration of the tip by a 'time' amount. If 'time' is a greater duration than
-    /// that of the Tip, instead of panicking, the duration will be set to 0.
+    /// that of the Tip, instead of panicking, the duration will be set to 0. Once a tip's duration
+    /// reaches 0 this way, its priority is reduced to the minimum.
     pub fn ellapse(&mut self, time: Duration) {
         self.duration = if self.duration < time {
+            self.priority = i32::MIN;
             Duration::ZERO
         } else {
             self.duration - time
