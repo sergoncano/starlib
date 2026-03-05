@@ -1,5 +1,10 @@
 use std::ops::Add;
 
+use crate::{Coords, model::movement::Movement};
+
+/// Represents a collision box. The cardinals denote which INWARD movements are blocked. E.g.: if
+/// collider.north = true, then it will not allow something getting into it from the north.
+/// However, it will allow moving north from inside of it.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Collider {
     north: bool,
@@ -15,6 +20,16 @@ impl Collider {
             south,
             east,
             west,
+        }
+    }
+
+    /// Check if a movement directed towards the collider should be blocked.
+    pub fn blocks(&self, movement: &Movement) -> bool {
+        match movement {
+            Movement::Down => self.north,
+            Movement::Up => self.south,
+            Movement::Left => self.east,
+            Movement::Right => self.west,
         }
     }
 }
@@ -70,6 +85,22 @@ impl TryFrom<&str> for Collider {
             west,
         })
     }
+}
+
+pub fn collider_vector_from_lines(
+    lines: &Vec<&str>,
+    character: char,
+    collider: Collider,
+) -> Vec<(Coords, Collider)> {
+    let mut res = vec![];
+    for (y, line) in lines.iter().enumerate() {
+        for (x, current_character) in line.chars().enumerate() {
+            if current_character == character {
+                res.push((Coords::new(x as i32, y as i32), collider.clone()));
+            }
+        }
+    }
+    res
 }
 
 #[cfg(test)]
@@ -133,5 +164,26 @@ mod tests {
         let n2 = Collider::try_from("---w").unwrap();
         let n3 = Collider::try_from("---w").unwrap();
         assert_eq!(n1 + n2, n3);
+    }
+
+    #[test]
+    fn test_blocks() {
+        let nw = Collider::try_from("n--w").unwrap();
+        assert!(!nw.blocks(&Movement::Left));
+        assert!(!nw.blocks(&Movement::Up));
+        assert!(nw.blocks(&Movement::Down));
+        assert!(nw.blocks(&Movement::Right));
+    }
+
+    #[test]
+    fn test_collider_vector_from_lines() {
+        let lines = vec!["..........@", "..@.......|", "..|........"];
+        let collider = Collider::try_from("nsew").unwrap();
+        let expected1 = (Coords::new(2, 2), collider.clone());
+        let expected2 = (Coords::new(10, 1), collider.clone());
+        let res = collider_vector_from_lines(&lines, '|', collider);
+        assert!(res.contains(&expected1));
+        assert!(res.contains(&expected2));
+        assert_eq!(res.len(), 2);
     }
 }

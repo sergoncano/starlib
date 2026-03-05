@@ -1,3 +1,5 @@
+use crate::model::movement::Movement;
+
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Coords {
     pub x: i32,
@@ -7,6 +9,17 @@ pub struct Coords {
 impl Coords {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
+    }
+
+    pub fn do_movement(self, movement: &Movement) -> Coords {
+        let x = self.x;
+        let y = self.y;
+        match movement {
+            Movement::Up => Coords::new(x, y - 1),
+            Movement::Down => Coords::new(x, y + 1),
+            Movement::Left => Coords::new(x - 1, y),
+            Movement::Right => Coords::new(x + 1, y),
+        }
     }
 }
 

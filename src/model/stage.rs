@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     Sprite,
     graphics::map::Map,
-    model::{collider::Collider, coords::Coords},
+    model::{collider::Collider, coords::Coords, movement::Movement},
 };
 
 pub struct Stage {
@@ -51,12 +51,34 @@ impl Stage {
         map
     }
 
-    pub fn get_collider(self, coords: &Coords) -> Option<Collider> {
+    pub fn get_collider(&self, coords: &Coords) -> Option<Collider> {
         Option::<&Collider>::cloned(self.colliders.get(coords))
     }
 
     pub fn set_collider(&mut self, coords: Coords, collider: Collider) {
         self.colliders.insert(coords, collider);
+    }
+
+    pub fn collides(&self, coords: &Coords, movement: &Movement) -> bool {
+        let next_coords = coords.clone().do_movement(movement);
+        if self.in_bounds(&next_coords) {
+            if let Some(collider) = self.get_collider(&next_coords) {
+                collider.blocks(movement)
+            } else {
+                false
+            }
+        } else {
+            true
+        }
+    }
+
+    fn in_bounds(&self, coords: &Coords) -> bool {
+        let x = coords.x;
+        let y = coords.y;
+        let map_dimensions = self.map.get_size();
+        let map_x = map_dimensions.x;
+        let map_y = map_dimensions.y;
+        x >= 0 && y >= 0 && x < map_x && y < map_y
     }
 }
 
@@ -68,11 +90,7 @@ mod tests {
     fn test_builder() {
         let decoration = Sprite::build("@", 2);
         let position = Coords::new(2, 0);
-        let _stage = Stage::build(
-            Map::test_map(),
-            vec![(position, decoration)],
-            vec![],
-        );
+        let _stage = Stage::build(Map::test_map(), vec![(position, decoration)], vec![]);
     }
 
     #[test]
@@ -81,11 +99,7 @@ mod tests {
         let coords = Coords::new(2, 1);
         let new_collider = collider.clone();
         let new_coords = coords.clone();
-        let stage = Stage::build(
-            Map::test_map(),
-            vec![],
-            vec![(coords, collider)],
-        );
+        let stage = Stage::build(Map::test_map(), vec![], vec![(coords, collider)]);
         assert_eq!(
             new_collider,
             stage
@@ -99,12 +113,21 @@ mod tests {
         let collider = Collider::try_from("n-e-").unwrap();
         let collider2 = Collider::try_from("n--w").unwrap();
         let coords = Coords::new(2, 1);
-        let mut stage = Stage::build(
-            Map::test_map(),
-            vec![],
-            vec![(coords.clone(), collider)],
-        );
+        let mut stage = Stage::build(Map::test_map(), vec![], vec![(coords.clone(), collider)]);
         stage.set_collider(coords.clone(), collider2.clone());
         assert_eq!(stage.get_collider(&coords), Some(collider2));
+    }
+
+    #[test]
+    fn test_collides() {
+        let stage = Stage::build(
+            Map::test_map(),
+            vec![],
+            vec![(Coords::new(1, 0), Collider::try_from("--e-").unwrap())],
+        );
+        assert!(!stage.collides(&Coords::new(0, 0), &Movement::Right));
+        assert!(stage.collides(&Coords::new(2, 0), &Movement::Left));
+        assert!(!stage.collides(&Coords::new(0, 0), &Movement::Down));
+        assert!(stage.collides(&Coords::new(300, 300), &Movement::Down));
     }
 }

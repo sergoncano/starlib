@@ -1,4 +1,4 @@
-use std::{panic::catch_unwind, time::Duration};
+use std::time::Duration;
 
 /// Tips are text that is rendered under the map. The duration of a tip indicates for how long it
 /// will be rendered. If two tips are tried to be rendered at once, the one with higher priority
@@ -13,10 +13,14 @@ pub struct Tip {
 }
 
 impl Tip {
-    pub fn new(text: String, duration: Duration, priority: i32) -> Self{
-        Tip {text, duration, priority}
+    pub fn new(text: String, duration: Duration, priority: i32) -> Self {
+        Tip {
+            text,
+            duration,
+            priority,
+        }
     }
-    
+
     /// Returns the tip with the most priority, in case of equal priorities, the caller is
     /// returned.
     /// ```
@@ -41,7 +45,11 @@ impl Tip {
     /// Reduce the duration of the tip by a 'time' amount. If 'time' is a greater duration than
     /// that of the Tip, instead of panicking, the duration will be set to 0.
     pub fn ellapse(&mut self, time: Duration) {
-        self.duration = catch_unwind(|| { self.duration - time }).unwrap_or(Duration::from_secs(0));
+        self.duration = if self.duration < time {
+            Duration::ZERO
+        } else {
+            self.duration - time
+        }
     }
 
     pub fn has_expired(&self) -> bool {

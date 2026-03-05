@@ -1,14 +1,22 @@
 use std::{collections::HashMap, thread::sleep, time::Duration};
 
-use crate::{Sprite, graphics::map::Map, model::{coords::Coords, tip::Tip}};
+use crate::{
+    Sprite,
+    graphics::map::Map,
+    model::{coords::Coords, tip::Tip},
+};
 
-use crossterm::{cursor::MoveTo, execute, terminal::{Clear, enable_raw_mode}};
+use crossterm::{
+    cursor::{MoveTo, MoveToNextLine},
+    execute,
+    terminal::{Clear, enable_raw_mode},
+};
 
 pub(crate) fn render_game(
     map: &Map,
     decorations: &HashMap<Coords, Sprite>,
     entity_sprites: &Vec<(Coords, Sprite)>,
-    tip: Option<Tip>
+    tip: Option<Tip>,
 ) {
     //this is not optimal efficiency but I think the shorter code is worth it
     let mut decorations = decorations.clone();
@@ -23,8 +31,10 @@ pub(crate) fn render_game(
     for (y, line) in map.lines.iter().enumerate() {
         let mut res_line = String::from("");
         for (x, char) in line.chars().enumerate() {
-            if let Some(alt_char) = decorations.get(&Coords::new(x as i32, y as i32)) && alt_char.get_z_index() > 0 {
-                    res_line.push(alt_char.get_character());
+            if let Some(alt_char) = decorations.get(&Coords::new(x as i32, y as i32))
+                && alt_char.get_z_index() > 0
+            {
+                res_line.push(alt_char.get_character());
             } else {
                 res_line.push(char);
             }
@@ -35,6 +45,7 @@ pub(crate) fn render_game(
 }
 
 fn centered_render(text: Vec<String>, tip: Option<Tip>) {
+    let mut stdout = std::io::stdout();
     let mut width;
     let mut height;
     loop {
@@ -50,18 +61,20 @@ fn centered_render(text: Vec<String>, tip: Option<Tip>) {
             break;
         }
     }
-    for _ in 0..(height - text.len().div_ceil(2)) {
-        println!();
+    for _ in 0..((height - text.len()).div_ceil(2)) {
+        let _ = execute!(stdout, MoveToNextLine(1));
     }
     for line in text {
-        println!("{: ^width$}", line);
+        print!("{: ^width$}", line);
+        let _ = execute!(stdout, MoveToNextLine(1));
     }
     if let Some(tip) = tip {
-        println!("{: ^width$}", tip.get_text());
+        print!("{: ^width$}", tip.get_text());
+        let _ = execute!(stdout, MoveToNextLine(1));
     }
 }
 
-fn clear_screen() {
+pub fn clear_screen() {
     let mut stdout = std::io::stdout();
     let _ = execute!(stdout, Clear(crossterm::terminal::ClearType::All));
     let _ = execute!(stdout, MoveTo(0, 0));
@@ -73,10 +86,6 @@ pub fn setup_terminal_properties() {
     let _ = execute!(stdout, EnterAlternateScreen);
     let _ = execute!(stdout, cursor::Hide);
     let _ = execute!(stdout, cursor::MoveTo(0, 0));
-
-    //Make input keys invisible
-    let _ = execute!(stdout, cursor::Hide);
-    let _ = execute!(stdout, EnterAlternateScreen);
     let _ = enable_raw_mode();
 }
 

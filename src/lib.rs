@@ -3,7 +3,7 @@ pub mod model;
 pub mod util;
 
 pub use graphics::map::Map;
-pub use graphics::renderer as renderer;
+pub use graphics::renderer;
 pub use graphics::sprite::Sprite;
 pub use model::collider::Collider;
 pub use model::coords::Coords;

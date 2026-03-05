@@ -1,3 +1,5 @@
+use crate::Coords;
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Sprite {
     character: char,
@@ -65,6 +67,25 @@ impl Sprite {
     }
 }
 
+pub fn sprite_vector_from_lines(
+    lines: &Vec<&str>,
+    character: char,
+    z_index: i32,
+) -> Vec<(Coords, Sprite)> {
+    let mut res = vec![];
+    for (y, line) in lines.iter().enumerate() {
+        for (x, current_character) in line.chars().enumerate() {
+            if current_character == character {
+                res.push((
+                    Coords::new(x as i32, y as i32),
+                    Sprite::new(character, z_index),
+                ));
+            }
+        }
+    }
+    res
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -102,5 +123,17 @@ mod tests {
         let a2 = a.clone();
         let b = Sprite::build("B", 1);
         assert_eq!(a, a2.overlap(b));
+    }
+
+    #[test]
+    fn test_sprite_vector_from_lines() {
+        let lines = vec!["..........@", "..@.......|", "..|........"];
+        let sprite = Sprite::new('@', 2);
+        let expected1 = (Coords::new(2, 1), sprite.clone());
+        let expected2 = (Coords::new(10, 0), sprite.clone());
+        let res = sprite_vector_from_lines(&lines, '@', 2);
+        assert!(res.contains(&expected1));
+        assert!(res.contains(&expected2));
+        assert_eq!(res.len(), 2);
     }
 }

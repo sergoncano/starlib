@@ -1,6 +1,12 @@
-use std::{panic::catch_unwind, time::{Duration, Instant}};
+use std::{
+    thread::sleep,
+    time::{Duration, Instant},
+};
 
-use crate::{graphics::renderer::render_game, model::{entity::Entity, event::Event, stage::Stage, tip::Tip}};
+use crate::{
+    graphics::renderer::render_game,
+    model::{entity::Entity, event::Event, stage::Stage, tip::Tip},
+};
 
 pub struct Level<T> {
     stage: Stage,
@@ -15,14 +21,19 @@ impl<T> Level<T> {
     pub fn run(&mut self) -> i32 {
         let mut delta_time = Duration::ZERO;
         let mut tip = Tip::new(String::from(""), Duration::ZERO, 0);
-        let mut remaining_turn_time: Vec<Duration> = self.entities.iter().map(|e| e.get_turn_delay()).collect();
+        let mut remaining_turn_time: Vec<Duration> =
+            self.entities.iter().map(|e| e.get_turn_delay()).collect();
         loop {
             let ti = Instant::now();
             tip.ellapse(delta_time);
             let mut event_buffer = vec![];
             for i in 0..self.entities.len() {
-                let mut time = remaining_turn_time.get(i).unwrap().clone();
-                time = catch_unwind(|| { time - delta_time }).unwrap_or(Duration::ZERO);
+                let mut time = *remaining_turn_time.get(i).unwrap();
+                time = if time < delta_time {
+                    Duration::ZERO
+                } else {
+                    time - delta_time
+                };
                 if time == Duration::ZERO {
                     let returned_events =
                         self.entities.get_mut(i).unwrap().take_turn(&mut self.stage);
@@ -40,13 +51,13 @@ impl<T> Level<T> {
                                 new_event_buffer
                                     .extend(entity.handle_event(&user_event, &mut self.stage));
                             }
-                        },
+                        }
                         Event::Tip(t) => {
                             tip = t.overlap(tip);
-                        },
+                        }
                         Event::ExitLevel(exit_code) => {
                             return exit_code;
-                        },
+                        }
                     }
                 }
                 event_buffer = new_event_buffer;
@@ -54,7 +65,17 @@ impl<T> Level<T> {
                     break;
                 }
             }
-            render_game(&self.stage.map, &self.stage.decorations, &self.entities.iter().map(|e| e.get_render()).collect(), if !(&tip).has_expired() { Some(tip.clone()) } else { None } );
+            render_game(
+                &self.stage.map,
+                &self.stage.decorations,
+                &self.entities.iter().map(|e| e.get_render()).collect(),
+                if !(tip).has_expired() {
+                    Some(tip.clone())
+                } else {
+                    None
+                },
+            );
+            sleep(Duration::from_millis(1000/30));
             let tf = Instant::now();
             delta_time = tf - ti;
         }
@@ -108,7 +129,10 @@ mod tests {
                 Duration::from_secs(1)
             }
             fn get_render(&self) -> (crate::model::coords::Coords, crate::Sprite) {
-                (crate::model::coords::Coords::new(0,0),Sprite::build("o", 3))
+                (
+                    crate::model::coords::Coords::new(0, 0),
+                    Sprite::build("o", 3),
+                )
             }
         }
 
