@@ -12,3 +12,7 @@ pub use model::event::Event;
 pub use model::level::Level;
 pub use model::stage::Stage;
 pub use model::tip::Tip;
+pub use util::input::Input;
+pub use util::ui;
+
+pub(crate) const FRAME_DURATION: std::time::Duration = std::time::Duration::from_millis(1000 / 30);

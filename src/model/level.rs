@@ -4,6 +4,7 @@ use std::{
 };
 
 use crate::{
+    FRAME_DURATION,
     graphics::renderer::render_game,
     model::{entity::Entity, event::Event, stage::Stage, tip::Tip},
 };
@@ -75,7 +76,7 @@ impl<T> Level<T> {
                     None
                 },
             );
-            sleep(Duration::from_millis(1000 / 30));
+            sleep(FRAME_DURATION);
             let tf = Instant::now();
             delta_time = tf - ti;
         }

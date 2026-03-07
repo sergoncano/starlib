@@ -21,6 +21,17 @@ impl Coords {
             Movement::Right => Coords::new(x + 1, y),
         }
     }
+
+    /// Returns the Manhattan distance between to points.
+    /// ```
+    /// use starlib::Coords;
+    /// let c1 = Coords::new(1,1);
+    /// let c2 = Coords::new(-1,-1);
+    /// assert_eq!(c1.distance(&c2), 4);
+    /// ```
+    pub fn distance(&self, other: &Coords) -> i32 {
+        (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
 }
 
 #[cfg(test)]
@@ -39,5 +50,18 @@ mod tests {
         coords.x = 3;
         coords.y = 4;
         assert_eq!(coords, Coords::new(3, 4));
+    }
+
+    #[test]
+    fn test_do_movement() {
+        let mut c = Coords::new(2, 2);
+        c = c.do_movement(&Movement::Right);
+        assert_eq!(Coords::new(3, 2), c);
+        c = c.do_movement(&Movement::Down);
+        assert_eq!(Coords::new(3, 3), c);
+        c = c.do_movement(&Movement::Left);
+        assert_eq!(Coords::new(2, 3), c);
+        c = c.do_movement(&Movement::Up);
+        assert_eq!(Coords::new(2, 2), c);
     }
 }

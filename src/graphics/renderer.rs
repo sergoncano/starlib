@@ -41,10 +41,10 @@ pub(crate) fn render_game(
         }
         res.push(res_line);
     }
-    centered_render(res, tip);
+    centered_render(&res, tip);
 }
 
-fn centered_render(text: Vec<String>, tip: Option<Tip>) {
+pub(crate) fn centered_render(text: &Vec<String>, tip: Option<Tip>) {
     let mut stdout = std::io::stdout();
     let mut width;
     let mut height;

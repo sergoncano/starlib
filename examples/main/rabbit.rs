@@ -14,12 +14,25 @@ pub(crate) struct Rabbit {
 }
 
 impl Rabbit {
-    pub fn new(coords: Coords, speed: u32) -> Self {
+    pub fn new(coords: Coords) -> Self {
         Rabbit {
             coords,
             player_coords: Coords::new(-1, -1),
-            speed: if speed < 3 { speed } else { 3 },
+            speed: 1,
             tip_shown: false,
+        }
+    }
+
+    pub fn assess_danger(&mut self) {
+        let distance = self.coords.distance(&self.player_coords);
+        if distance < 5 {
+            self.speed = 3;
+        } else if distance < 5 {
+            self.speed = 2;
+        } else if distance < 10 {
+            self.speed = 1;
+        } else {
+            self.speed = 0;
         }
     }
 }
@@ -39,11 +52,12 @@ impl Entity<UserEvent> for Rabbit {
         if !stage.collides(&self.coords, &movement) {
             self.coords = self.coords.clone().do_movement(&movement);
         }
+        self.assess_danger();
         if !self.tip_shown {
             let tip = Tip::new(
                 String::from("Catch me if you can!"),
                 Duration::from_secs(3),
-                0,
+                2,
             );
             self.tip_shown = true;
             vec![Event::Tip(tip)]
@@ -55,7 +69,7 @@ impl Entity<UserEvent> for Rabbit {
                     1,
                 ))]
             } else {
-                vec![]
+                vec![Event::Tip(Tip::new(String::from(""), Duration::ZERO, 1))]
             }
         }
     }
@@ -79,6 +93,7 @@ impl Entity<UserEvent> for Rabbit {
             }
             UserEvent::PlayerMoved(coords) => {
                 self.player_coords = coords.clone();
+                self.assess_danger();
                 if &self.coords == coords {
                     vec![Event::Tip(Tip::new(
                         String::from("Press E to catch"),
@@ -86,17 +101,13 @@ impl Entity<UserEvent> for Rabbit {
                         1,
                     ))]
                 } else {
-                    vec![Event::Tip(Tip::new(
-                        String::from(""),
-                        self.get_turn_delay(),
-                        1,
-                    ))]
+                    vec![Event::Tip(Tip::new(String::from(""), Duration::ZERO, 1))]
                 }
             }
         }
     }
 
     fn get_turn_delay(&self) -> std::time::Duration {
-        Duration::from_millis((1000 - 200 * self.speed) as u64)
+        Duration::from_millis((1000 - 250 * self.speed) as u64)
     }
 }

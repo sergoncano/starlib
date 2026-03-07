@@ -1,6 +1,8 @@
 use std::time::Duration;
 
-use starlib::{Coords, Entity, Event, Sprite, model::movement::Movement, util::input::get_input};
+use starlib::{
+    Coords, Entity, Event, Input, Sprite, model::movement::Movement, util::input::get_input,
+};
 
 use crate::user_event::UserEvent;
 
@@ -36,11 +38,11 @@ impl Entity<UserEvent> for Player {
         let input = get_input();
         if let Some(input) = input {
             let movement = match input {
-                'w' => Some(Movement::Up),
-                'a' => Some(Movement::Left),
-                's' => Some(Movement::Down),
-                'd' => Some(Movement::Right),
-                'e' => {
+                Input::Char('w') | Input::Up => Some(Movement::Up),
+                Input::Char('a') | Input::Left => Some(Movement::Left),
+                Input::Char('s') | Input::Down => Some(Movement::Down),
+                Input::Char('d') | Input::Right => Some(Movement::Right),
+                Input::Char('e') | Input::Enter | Input::Spacebar => {
                     res.push(Event::User(UserEvent::CatchRabbit));
                     None
                 }
