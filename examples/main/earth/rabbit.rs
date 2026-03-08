@@ -4,7 +4,7 @@ use rand::prelude::*;
 
 use starlib::{Coords, Entity, Event, Sprite, Tip, model::movement::Movement};
 
-use crate::user_event::UserEvent;
+use crate::earth::user_event::UserEvent;
 
 pub(crate) struct Rabbit {
     coords: Coords,

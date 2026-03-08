@@ -10,6 +10,7 @@ pub enum Input {
     Right,
     Spacebar,
     Enter,
+    Esc,
 }
 
 /// Returns the lowercase version of the character being pressed, if one. Otherwise returns None
@@ -25,6 +26,7 @@ pub fn get_input() -> Option<Input> {
             KeyCode::Left => Some(Input::Left),
             KeyCode::Right => Some(Input::Right),
             KeyCode::Enter => Some(Input::Enter),
+            KeyCode::Esc => Some(Input::Esc),
             _ => None,
         }
     } else {

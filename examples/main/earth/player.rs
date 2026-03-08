@@ -4,7 +4,7 @@ use starlib::{
     Coords, Entity, Event, Input, Sprite, model::movement::Movement, util::input::get_input,
 };
 
-use crate::user_event::UserEvent;
+use crate::earth::user_event::UserEvent;
 
 pub(crate) struct Player {
     coords: Coords,
@@ -45,7 +45,17 @@ impl Entity<UserEvent> for Player {
                 Input::Char('e') | Input::Enter | Input::Spacebar => {
                     res.push(Event::User(UserEvent::CatchRabbit));
                     None
-                }
+                },
+                Input::Esc => {
+                    match crate::util::get_pause_menu().prompt() {
+                        0 => None,
+                        1 => {
+                            res.push(Event::ExitLevel(0));
+                            None
+                        }
+                        _ => unreachable!()
+                    }
+                },
                 _ => None,
             };
             if let Some(movement) = movement {
