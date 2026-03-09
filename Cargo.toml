@@ -5,5 +5,7 @@ edition = "2024"
 
 [dependencies]
 crossterm = "0.29.0"
-rand = "0.10.0"
 time = "0.3.47"
+
+[dev-dependencies]
+rand = "0.10.0"
