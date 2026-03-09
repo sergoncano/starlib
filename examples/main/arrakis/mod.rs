@@ -12,7 +12,7 @@ mod stage_handler;
 const ELDER_COORDS: Coords = Coords {x: 9, y: 1};
 
 pub(crate) fn get_level() -> Level<UserEvent> {
-    let player = Box::new(Player::new(Coords::new(9,3), Duration::from_millis(120)));
+    let player = Box::new(Player::new(Coords::new(9,3), Duration::from_millis(105)));
     let elder = Box::new(Elder::new(ELDER_COORDS));
     let sandworm = Box::new(Sandworm::new());
     let escape_pod = Box::new(EscapePod::new(Coords::new(110, 2)));

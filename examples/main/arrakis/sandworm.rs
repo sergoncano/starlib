@@ -28,9 +28,9 @@ impl Sandworm {
 const STILL_SAND: char = '.';
 const MOVING_SAND: char = ',';
 const WORM_FANG: char = '^';
-const WORM_RADIUS: usize = 7;
+const WORM_RADIUS: usize = 8;
 const TURNS_WATING: usize = 5;
-const TURNS_WARNING: usize = 3;
+const TURNS_WARNING: usize = 4;
 const TURNS_EATING: usize = 1;
 
 impl Entity<UserEvent> for Sandworm {
@@ -44,7 +44,7 @@ impl Entity<UserEvent> for Sandworm {
     }
 
     fn take_turn(&mut self, stage: &mut starlib::Stage) -> Vec<starlib::Event<UserEvent>> {
-        let sands = vec![STILL_SAND, MOVING_SAND];
+        let sands = vec![MOVING_SAND, STILL_SAND];
         if self.step <= TURNS_WATING && self.can_eat {
             self.step += 1;
             self.player_coords = self.real_player_coords.clone();
