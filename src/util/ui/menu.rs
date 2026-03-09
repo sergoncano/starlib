@@ -29,6 +29,7 @@ impl Menu {
     }
 
     pub fn prompt(&mut self) -> usize {
+        crate::util::input::empty_event_queue();
         let n_options = &self.options.len();
         loop {
             self.render();

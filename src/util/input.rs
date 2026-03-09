@@ -34,7 +34,7 @@ pub fn get_input() -> Option<Input> {
     }
 }
 
-fn empty_event_queue() {
+pub(crate) fn empty_event_queue() {
     while poll(Duration::ZERO).expect("Running in non-interactive terminal") {
         let _ = read();
     }
