@@ -59,6 +59,14 @@ impl Stage {
         self.colliders.insert(coords, collider);
     }
 
+    pub fn get_decoration(&self, coords: &Coords) -> Option<Sprite> {
+        Option::<&Sprite>::cloned(self.decorations.get(coords))
+    }
+
+    pub fn set_decoration(&mut self, coords: Coords, decoration: Sprite) {
+        self.decorations.insert(coords, decoration);
+    }
+
     pub fn collides(&self, coords: &Coords, movement: &Movement) -> bool {
         let next_coords = coords.clone().do_movement(movement);
         if self.in_bounds(&next_coords) {

@@ -58,11 +58,11 @@ impl Sprite {
         }
     }
 
-    pub(crate) fn get_z_index(&self) -> i32 {
+    pub fn get_z_index(&self) -> i32 {
         self.z_index
     }
 
-    pub(crate) fn get_character(&self) -> char {
+    pub fn get_character(&self) -> char {
         self.character
     }
 }
