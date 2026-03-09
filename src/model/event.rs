@@ -4,5 +4,6 @@ use crate::model::tip::Tip;
 pub enum Event<T> {
     User(T),
     Tip(Tip),
+    ChangeStage(usize),
     ExitLevel(i32),
 }

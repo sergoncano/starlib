@@ -10,16 +10,20 @@ use crate::{
 };
 
 pub struct Level<T> {
-    stage: Stage,
+    stages: Vec<Stage>,
     entities: Vec<Box<dyn Entity<T>>>,
 }
 
 impl<T> Level<T> {
-    pub fn new(stage: Stage, entities: Vec<Box<dyn Entity<T>>>) -> Self {
-        Level::<T> { stage, entities }
+    pub fn build(stages: Vec<Stage>, entities: Vec<Box<dyn Entity<T>>>) -> Self {
+        if stages.len() == 0 {
+            panic!("No stages were provided for the level!");
+        }
+        Level::<T> { stages, entities }
     }
 
     pub fn run(&mut self) -> i32 {
+        let mut stage_i = 0;
         let mut delta_time = Duration::ZERO;
         let mut tip = Tip::new(String::from(""), Duration::ZERO, 0);
         let mut remaining_turn_time: Vec<Duration> =
@@ -37,7 +41,7 @@ impl<T> Level<T> {
                 };
                 if time == Duration::ZERO {
                     let returned_events =
-                        self.entities.get_mut(i).unwrap().take_turn(&mut self.stage);
+                        self.entities.get_mut(i).unwrap().take_turn(&mut self.stages[stage_i]);
                     event_buffer.extend(returned_events);
                     time = self.entities.get(i).unwrap().get_turn_delay();
                 }
@@ -50,11 +54,14 @@ impl<T> Level<T> {
                         Event::User(user_event) => {
                             for entity in self.entities.iter_mut() {
                                 new_event_buffer
-                                    .extend(entity.handle_event(&user_event, &mut self.stage));
+                                    .extend(entity.handle_event(&user_event, &mut self.stages[stage_i]));
                             }
                         }
                         Event::Tip(t) => {
                             tip = t.overlap(tip);
+                        }
+                        Event::ChangeStage(new_stage_i) => {
+                            stage_i = new_stage_i;
                         }
                         Event::ExitLevel(exit_code) => {
                             return exit_code;
@@ -67,8 +74,8 @@ impl<T> Level<T> {
                 }
             }
             render_game(
-                &self.stage.map,
-                &self.stage.decorations,
+                &self.stages[stage_i].map,
+                &self.stages[stage_i].decorations,
                 &self.entities.iter().map(|e| e.get_render()).collect(),
                 if !(tip).has_expired() {
                     Some(tip.clone())
@@ -94,7 +101,7 @@ mod tests {
     #[test]
     fn test_constructor() {
         let stage = Stage::build(Map::test_map(), vec![], vec![]);
-        let _level: Level<i32> = Level::new(stage, vec![]);
+        let _level: Level<i32> = Level::build(vec![stage], vec![]);
     }
 
     #[test]
@@ -138,7 +145,7 @@ mod tests {
         }
 
         let stage = Stage::build(Map::test_map(), vec![], vec![]);
-        let mut level: Level<i32> = Level::new(stage, vec![Box::new(TestEntity::new())]);
+        let mut level: Level<i32> = Level::build(vec![stage], vec![Box::new(TestEntity::new())]);
         assert_eq!(level.run(), EXIT_CODE);
     }
 }
