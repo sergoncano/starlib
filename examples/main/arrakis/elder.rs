@@ -81,7 +81,7 @@ impl Entity<UserEvent> for Elder {
                         }
                         8 => "...",
                         9 => "You want a tip?",
-                        10 => "I someone told me baiting the worms is a good idea",
+                        10 => "Someone once told me baiting the worms is a good idea",
                         11 => "but the person who told me is now dead.",
                         12 => "In the end, the choice is yours.",
                         13 => "...",
