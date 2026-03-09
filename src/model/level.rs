@@ -16,7 +16,7 @@ pub struct Level<T> {
 
 impl<T> Level<T> {
     pub fn build(stages: Vec<Stage>, entities: Vec<Box<dyn Entity<T>>>) -> Self {
-        if stages.len() == 0 {
+        if stages.is_empty() {
             panic!("No stages were provided for the level!");
         }
         Level::<T> { stages, entities }
@@ -40,8 +40,11 @@ impl<T> Level<T> {
                     time - delta_time
                 };
                 if time == Duration::ZERO {
-                    let returned_events =
-                        self.entities.get_mut(i).unwrap().take_turn(&mut self.stages[stage_i]);
+                    let returned_events = self
+                        .entities
+                        .get_mut(i)
+                        .unwrap()
+                        .take_turn(&mut self.stages[stage_i]);
                     event_buffer.extend(returned_events);
                     time = self.entities.get(i).unwrap().get_turn_delay();
                 }
@@ -53,8 +56,9 @@ impl<T> Level<T> {
                     match event {
                         Event::User(user_event) => {
                             for entity in self.entities.iter_mut() {
-                                new_event_buffer
-                                    .extend(entity.handle_event(&user_event, &mut self.stages[stage_i]));
+                                new_event_buffer.extend(
+                                    entity.handle_event(&user_event, &mut self.stages[stage_i]),
+                                );
                             }
                         }
                         Event::Tip(t) => {

@@ -12,7 +12,11 @@ pub(crate) struct EscapePod {
 
 impl EscapePod {
     pub(crate) fn new(coords: Coords) -> Self {
-        Self {coords, sprite: Sprite::new('M', 5), current_coords: Coords::new(-10, -10)}
+        Self {
+            coords,
+            sprite: Sprite::new('M', 5),
+            current_coords: Coords::new(-10, -10),
+        }
     }
 }
 
@@ -25,11 +29,19 @@ impl Entity<UserEvent> for EscapePod {
         (self.current_coords.clone(), self.sprite.clone())
     }
 
-    fn handle_event(&mut self, event: &UserEvent, _stage: &mut starlib::Stage) -> Vec<starlib::Event<UserEvent>> {
-        if let UserEvent::PlayerMoved(c) = event && c == &self.current_coords {
+    fn handle_event(
+        &mut self,
+        event: &UserEvent,
+        _stage: &mut starlib::Stage,
+    ) -> Vec<starlib::Event<UserEvent>> {
+        if let UserEvent::PlayerMoved(c) = event
+            && c == &self.current_coords
+        {
             vec![Event::ExitLevel(2)]
         } else {
-            if let UserEvent::ChangedStage(stage_i) = event && stage_i == &2 {
+            if let UserEvent::ChangedStage(stage_i) = event
+                && stage_i == &2
+            {
                 self.current_coords = self.coords.clone();
             }
             vec![]

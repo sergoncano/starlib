@@ -49,16 +49,14 @@ impl Entity<UserEvent> for Player {
                 Input::Char('e') | Input::Enter | Input::Spacebar => {
                     res.push(Event::User(UserEvent::PlayerInteracted));
                     None
-                },
-                Input::Esc => {
-                    match crate::util::get_pause_menu().prompt() {
-                        0 => None,
-                        1 => {
-                            res.push(Event::ExitLevel(0));
-                            None
-                        }
-                        _ => unreachable!()
+                }
+                Input::Esc => match crate::util::get_pause_menu().prompt() {
+                    0 => None,
+                    1 => {
+                        res.push(Event::ExitLevel(0));
+                        None
                     }
+                    _ => unreachable!(),
                 },
                 _ => None,
             };

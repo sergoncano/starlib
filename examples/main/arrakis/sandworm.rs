@@ -17,8 +17,8 @@ impl Sandworm {
     pub(crate) fn new() -> Self {
         Self {
             step: 0,
-            player_coords: Coords::new(0,0),
-            real_player_coords: Coords::new(0,0),
+            player_coords: Coords::new(0, 0),
+            real_player_coords: Coords::new(0, 0),
             can_eat: false,
             stage: 0,
         }
@@ -34,13 +34,12 @@ const TURNS_WARNING: usize = 4;
 const TURNS_EATING: usize = 1;
 
 impl Entity<UserEvent> for Sandworm {
-
     fn get_turn_delay(&self) -> std::time::Duration {
         Duration::from_millis(600)
     }
 
     fn get_render(&self) -> (Coords, starlib::Sprite) {
-        (Coords::new(-3,-3), Sprite::new('?', -1))
+        (Coords::new(-3, -3), Sprite::new('?', -1))
     }
 
     fn take_turn(&mut self, stage: &mut starlib::Stage) -> Vec<starlib::Event<UserEvent>> {
@@ -53,13 +52,17 @@ impl Entity<UserEvent> for Sandworm {
             self.step += 1;
             for coord in coord_radius(self.player_coords.clone(), WORM_RADIUS) {
                 let new_sprite = Sprite::new(sands[self.step % 2], 1);
-                if let Some(sprite) = stage.get_decoration(&coord) && sprite.get_z_index() > 1 {
+                if let Some(sprite) = stage.get_decoration(&coord)
+                    && sprite.get_z_index() > 1
+                {
                     stage.set_decoration(coord, sprite.overlap(new_sprite));
                 } else {
                     stage.set_decoration(coord, new_sprite);
                 }
             }
-        } else if self.step > TURNS_WATING && self.step < TURNS_WATING + TURNS_WARNING + TURNS_EATING {
+        } else if self.step > TURNS_WATING
+            && self.step < TURNS_WATING + TURNS_WARNING + TURNS_EATING
+        {
             self.step += 1;
             for coord in coord_radius(self.player_coords.clone(), WORM_RADIUS) {
                 stage.set_decoration(coord.clone(), Sprite::new(WORM_FANG, 1));
@@ -77,7 +80,11 @@ impl Entity<UserEvent> for Sandworm {
         vec![]
     }
 
-    fn handle_event(&mut self, event: &UserEvent, _stage: &mut starlib::Stage) -> Vec<starlib::Event<UserEvent>> {
+    fn handle_event(
+        &mut self,
+        event: &UserEvent,
+        _stage: &mut starlib::Stage,
+    ) -> Vec<starlib::Event<UserEvent>> {
         match event {
             UserEvent::PlayerMoved(coords) => {
                 self.real_player_coords = coords.clone();
@@ -85,8 +92,9 @@ impl Entity<UserEvent> for Sandworm {
                     self.player_coords = coords.clone();
                     self.player_coords.x += random_range(3..=5);
                 }
-                self.can_eat = !((self.real_player_coords.x < 25 && self.stage == 0) || (self.real_player_coords.x > 90 && self.stage == 2));
-            },
+                self.can_eat = !((self.real_player_coords.x < 25 && self.stage == 0)
+                    || (self.real_player_coords.x > 90 && self.stage == 2));
+            }
             UserEvent::ChangedStage(stage_i) => {
                 self.stage = *stage_i;
                 self.step = 0;
@@ -98,7 +106,12 @@ impl Entity<UserEvent> for Sandworm {
 }
 
 fn coord_radius(coords: Coords, radius: usize) -> Vec<Coords> {
-    let mods = vec![Movement::Up, Movement::Down, Movement::Left, Movement::Right];
+    let mods = vec![
+        Movement::Up,
+        Movement::Down,
+        Movement::Left,
+        Movement::Right,
+    ];
     let mut res = HashSet::new();
     res.insert(coords);
     for _ in 1..radius {

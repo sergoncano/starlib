@@ -6,7 +6,7 @@ use crate::user_event::UserEvent;
 
 pub(crate) struct StageHandler {
     coords: Coords,
-    stage: usize
+    stage: usize,
 }
 
 impl StageHandler {
@@ -16,11 +16,18 @@ impl StageHandler {
 }
 
 impl Entity<UserEvent> for StageHandler {
-    fn handle_event(&mut self, event: &UserEvent, _stage: &mut starlib::Stage) -> Vec<starlib::Event<UserEvent>> {
+    fn handle_event(
+        &mut self,
+        event: &UserEvent,
+        _stage: &mut starlib::Stage,
+    ) -> Vec<starlib::Event<UserEvent>> {
         match event {
             UserEvent::PlayerMoved(player_coords) => {
                 if player_coords == &self.coords && self.stage != 2 {
-                    vec![Event::ChangeStage(self.stage + 1), Event::User(UserEvent::ChangedStage(self.stage + 1))]
+                    vec![
+                        Event::ChangeStage(self.stage + 1),
+                        Event::User(UserEvent::ChangedStage(self.stage + 1)),
+                    ]
                 } else {
                     vec![]
                 }
@@ -29,7 +36,7 @@ impl Entity<UserEvent> for StageHandler {
                 self.stage = *stage_i;
                 vec![]
             }
-            _ => vec![]
+            _ => vec![],
         }
     }
 

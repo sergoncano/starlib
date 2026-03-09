@@ -1,6 +1,6 @@
 use starlib::{
     renderer::{restore_terminal_properties, setup_terminal_properties},
-    ui::{menu::Menu},
+    ui::menu::Menu,
 };
 
 mod arrakis;
@@ -34,7 +34,7 @@ fn main() {
                 }
             }
             2 => break,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
     restore_terminal_properties();

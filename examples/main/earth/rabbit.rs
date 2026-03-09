@@ -44,7 +44,7 @@ impl Entity<UserEvent> for Rabbit {
             2 => Movement::Down,
             3 => Movement::Left,
             4 => Movement::Right,
-            _ => unreachable!()
+            _ => unreachable!(),
         };
         if !stage.collides(&self.coords, &movement) {
             self.coords = self.coords.clone().do_movement(&movement);
@@ -101,7 +101,7 @@ impl Entity<UserEvent> for Rabbit {
                     vec![Event::Tip(Tip::new(String::from(""), Duration::ZERO, 1))]
                 }
             }
-            _ => vec![]
+            _ => vec![],
         }
     }
 
