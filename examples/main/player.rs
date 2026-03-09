@@ -4,15 +4,16 @@ use starlib::{
     Coords, Entity, Event, Input, Sprite, model::movement::Movement, util::input::get_input,
 };
 
-use crate::earth::user_event::UserEvent;
+use crate::user_event::UserEvent;
 
 pub(crate) struct Player {
     coords: Coords,
+    turn_delay: Duration,
 }
 
 impl Player {
-    pub fn new(coords: Coords) -> Self {
-        Player { coords }
+    pub fn new(coords: Coords, turn_delay: Duration) -> Self {
+        Player { coords, turn_delay }
     }
 }
 
@@ -22,14 +23,17 @@ impl Entity<UserEvent> for Player {
     }
 
     fn get_turn_delay(&self) -> std::time::Duration {
-        Duration::from_millis(100)
+        self.turn_delay
     }
 
     fn handle_event(
         &mut self,
-        _event: &UserEvent,
+        event: &UserEvent,
         _stage: &mut starlib::Stage,
     ) -> Vec<starlib::Event<UserEvent>> {
+        if let UserEvent::ChangedStage(_) = event {
+            self.coords.x = 0;
+        }
         vec![]
     }
 
@@ -43,7 +47,7 @@ impl Entity<UserEvent> for Player {
                 Input::Char('s') | Input::Down => Some(Movement::Down),
                 Input::Char('d') | Input::Right => Some(Movement::Right),
                 Input::Char('e') | Input::Enter | Input::Spacebar => {
-                    res.push(Event::User(UserEvent::CatchRabbit));
+                    res.push(Event::User(UserEvent::PlayerInteracted));
                     None
                 },
                 Input::Esc => {

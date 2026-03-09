@@ -4,8 +4,7 @@ use rand::prelude::*;
 
 use starlib::{Coords, Entity, Event, Sprite, Tip, model::movement::Movement};
 
-use crate::earth::user_event::UserEvent;
-
+use crate::user_event::UserEvent;
 pub(crate) struct Rabbit {
     coords: Coords,
     player_coords: Coords,
@@ -45,9 +44,7 @@ impl Entity<UserEvent> for Rabbit {
             2 => Movement::Down,
             3 => Movement::Left,
             4 => Movement::Right,
-            _ => {
-                panic!("Wrong random range in rabbit implementation")
-            }
+            _ => unreachable!()
         };
         if !stage.collides(&self.coords, &movement) {
             self.coords = self.coords.clone().do_movement(&movement);
@@ -55,7 +52,7 @@ impl Entity<UserEvent> for Rabbit {
         self.assess_danger();
         if !self.tip_shown {
             let tip = Tip::new(
-                String::from("Catch me if you can!"),
+                String::from("Press WASD to move"),
                 Duration::from_secs(3),
                 2,
             );
@@ -84,7 +81,7 @@ impl Entity<UserEvent> for Rabbit {
         _stage: &mut starlib::Stage,
     ) -> Vec<starlib::Event<UserEvent>> {
         match event {
-            UserEvent::CatchRabbit => {
+            UserEvent::PlayerInteracted => {
                 if self.player_coords == self.coords {
                     vec![Event::ExitLevel(1)]
                 } else {
@@ -104,6 +101,7 @@ impl Entity<UserEvent> for Rabbit {
                     vec![Event::Tip(Tip::new(String::from(""), Duration::ZERO, 1))]
                 }
             }
+            _ => vec![]
         }
     }
 

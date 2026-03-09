@@ -3,12 +3,16 @@ use starlib::{
     ui::{menu::Menu},
 };
 
+mod arrakis;
 mod earth;
+mod player;
+mod user_event;
 mod util;
 
 fn main() {
     setup_terminal_properties();
     let earth_title = earth::get_title();
+    let arrakis_title = arrakis::get_title();
     let mut menu = get_menu();
     loop {
         match menu.prompt() {
@@ -20,15 +24,24 @@ fn main() {
                     _ => unreachable!(),
                 }
             }
-            1 => break,
-            _ => panic!("Nonexistant menu option chosen"),
+            1 => {
+                arrakis_title.show();
+                match arrakis::get_level().run() {
+                    0 => (),
+                    1 => arrakis::get_death_title().show(),
+                    2 => arrakis::get_victory_title().show(),
+                    _ => unreachable!(),
+                }
+            }
+            2 => break,
+            _ => unreachable!()
         }
     }
     restore_terminal_properties();
 }
 
 fn get_menu() -> Menu {
-    let options = vec!["Earth", "Exit"]
+    let options = vec!["Earth", "Arrakis", "Exit"]
         .iter()
         .map(|s| s.to_string())
         .collect();

@@ -2,15 +2,13 @@ use std::time::Duration;
 
 use starlib::{Collider, Coords, Entity, Level, Map, Stage, graphics::sprite::sprite_vector_from_lines, model::collider::collider_vector_from_lines, ui::title::Title};
 
-use crate::earth::{player::Player, rabbit::Rabbit, user_event::UserEvent};
+use crate::{earth::rabbit::Rabbit, player::Player, user_event::UserEvent};
 
-mod player;
 mod rabbit;
-mod user_event;
 
 pub(crate) fn get_level() -> Level<UserEvent> {
     let coords = Coords::new(2, 2);
-    let player = Player::new(coords);
+    let player = Player::new(coords, Duration::from_millis(100));
     let rabbit = Rabbit::new(Coords::new(13, 2));
     let entities: Vec<Box<dyn Entity<UserEvent>>> = vec![Box::new(player), Box::new(rabbit)];
     let map_lines = vec![
@@ -26,7 +24,7 @@ pub(crate) fn get_level() -> Level<UserEvent> {
         collider_vector_from_lines(&map_lines, '|', Collider::try_from("nsew").unwrap());
     let map = Map::build(map_lines);
     let stage = Stage::build(map, decorations, colliders);
-    Level::new(stage, entities)
+    Level::build(vec![stage], entities)
 }
 
 pub(crate) fn get_title() -> Title {
