@@ -1,6 +1,6 @@
 use starlib::{
     renderer::{restore_terminal_properties, setup_terminal_properties},
-    ui::menu::Menu,
+    Menu,
 };
 
 mod arrakis;

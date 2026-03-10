@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use starlib::{
     Collider, Coords, Entity, Level, Map, Stage, graphics::sprite::sprite_vector_from_lines,
-    model::collider::collider_vector_from_lines, ui::title::Title,
+    model::collider::collider_vector_from_lines, Title,
 };
 
 use crate::{earth::rabbit::Rabbit, player::Player, user_event::UserEvent};
