@@ -27,7 +27,9 @@ pub mod util;
 pub use graphics::map::Map;
 pub use graphics::renderer;
 pub use graphics::sprite::Sprite;
+pub use graphics::sprite::sprite_vector_from_lines;
 pub use model::collider::Collider;
+pub use model::collider::collider_vector_from_lines;
 pub use model::coords::Coords;
 pub use model::entity::Entity;
 pub use model::event::Event;
@@ -35,7 +37,7 @@ pub use model::level::Level;
 pub use model::stage::Stage;
 pub use model::tip::Tip;
 pub use util::input::Input;
-pub use util::ui;
+pub use util::input;
 pub use util::ui::menu::Menu;
 pub use util::ui::title::Title;
 
