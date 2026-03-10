@@ -1,6 +1,13 @@
 [package]
 name = "starlib"
-version = "0.1.0"
+version = "1.0.0"
+authors = ["Sergio González"]
+description = "A 2D grid-based TUI game engine"
+repository = "https://github.com/sergoncano/starlib"
+license = "GPL-2.0-or-later"
+keywords = ["gamedev", "TUI", "terminal"]
+categories = ["game-development", "game-engines", "command-line-interface"]
+readme = "README.md"
 edition = "2024"
 
 [dependencies]
