@@ -69,7 +69,7 @@ impl Entity<UserEvent> for Sandworm {
                 if &self.real_player_coords == &coord {
                     return vec![Event::ExitLevel(1)];
                 }
-                stage.set_collider(coord, Collider::try_from("----").unwrap());
+                stage.set_collider(coord, Collider::build("----"));
             }
         } else if self.step == TURNS_WATING + TURNS_WARNING + TURNS_EATING {
             for coord in coord_radius(self.player_coords.clone(), WORM_RADIUS) {

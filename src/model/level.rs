@@ -1,3 +1,4 @@
+//! Contains the [Level] struct.
 use std::{
     thread::sleep,
     time::{Duration, Instant},
@@ -9,12 +10,21 @@ use crate::{
     model::{entity::Entity, event::Event, stage::Stage, tip::Tip},
 };
 
+/// A fully functional game level. Contains one (or more) stage(s) and the entities in it.
 pub struct Level<T> {
     stages: Vec<Stage>,
     entities: Vec<Box<dyn Entity<T>>>,
 }
 
 impl<T> Level<T> {
+    /// Creates a level with the provided stages and entities. Entities need to be passed in a
+    /// vector in which each entity is inside of a [Box]. Such vector needs to be type-annotated:
+    /// ```
+    /// use starlib::Entity;
+    /// let entities: Vec<Box<dyn Entity<i32>>> = vec![/* Your entities here */];
+    /// ```
+    /// Panics if there isn't at least one stage. The initial stage will be the one at index 0 in
+    /// the vector.
     pub fn build(stages: Vec<Stage>, entities: Vec<Box<dyn Entity<T>>>) -> Self {
         if stages.is_empty() {
             panic!("No stages were provided for the level!");
@@ -22,6 +32,10 @@ impl<T> Level<T> {
         Level::<T> { stages, entities }
     }
 
+    /// Executes the game loop for the level, executing turns and handling event passing for all
+    /// entities inside of it. Also takes care of internal [Event]s and renders the stage and the
+    /// entities in it using the methods provided by the [renderer][crate::renderer]. The return value is the exit
+    /// code for the level. Useful when there are wins and losses.
     pub fn run(&mut self) -> i32 {
         let mut stage_i = 0;
         let mut delta_time = Duration::ZERO;
@@ -104,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_constructor() {
-        let stage = Stage::build(Map::test_map(), vec![], vec![]);
+        let stage = Stage::new(Map::test_map(), vec![], vec![]);
         let _level: Level<i32> = Level::build(vec![stage], vec![]);
     }
 
@@ -148,7 +162,7 @@ mod tests {
             }
         }
 
-        let stage = Stage::build(Map::test_map(), vec![], vec![]);
+        let stage = Stage::new(Map::test_map(), vec![], vec![]);
         let mut level: Level<i32> = Level::build(vec![stage], vec![Box::new(TestEntity::new())]);
         assert_eq!(level.run(), EXIT_CODE);
     }

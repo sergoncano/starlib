@@ -1,3 +1,5 @@
+//! Contains the [Tip] struct.
+
 use std::time::Duration;
 
 /// Tips are text that is rendered under the map. The duration of a tip indicates for how long it
@@ -5,6 +7,7 @@ use std::time::Duration;
 /// will prevail. If a tip has, for instance, 1 second left on screen, and another tip is sent with
 /// lower priority and duration 2, after a second passes, it will NOT be rendered for the next
 /// second. You'll need to send it again after the previous tip has expired.
+/// If one tip is sent through a [crate::Level]'s [crate::Event] buffer and then another one with the same priority is sent, the newest one will take over.
 #[derive(Debug, Clone)]
 pub struct Tip {
     text: String,
@@ -45,7 +48,7 @@ impl Tip {
     /// Reduce the duration of the tip by a 'time' amount. If 'time' is a greater duration than
     /// that of the Tip, instead of panicking, the duration will be set to 0. Once a tip's duration
     /// reaches 0 this way, its priority is reduced to the minimum.
-    pub fn ellapse(&mut self, time: Duration) {
+    pub(crate) fn ellapse(&mut self, time: Duration) {
         self.duration = if self.duration < time {
             self.priority = i32::MIN;
             Duration::ZERO
@@ -54,7 +57,8 @@ impl Tip {
         }
     }
 
-    pub fn has_expired(&self) -> bool {
+    /// Checks if a tip's duration is zero.
+    pub(crate) fn has_expired(&self) -> bool {
         self.duration == Duration::from_secs(0)
     }
 }

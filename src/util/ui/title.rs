@@ -1,7 +1,10 @@
+//! Contains the [Title] struct.
+
 use std::{thread::sleep, time::Duration};
 
 use crate::renderer::centered_render;
 
+/// A splash title. Used for showing non-interactable text or ascii art on-screen.
 pub struct Title {
     text: Vec<String>,
     duration: Duration,
@@ -23,6 +26,8 @@ impl Title {
         }
     }
 
+    /// For the title's [Duration](std::time::Duration), its text is the only thing shown
+    /// on-screen. It is centered.
     pub fn show(&self) {
         centered_render(
             &self

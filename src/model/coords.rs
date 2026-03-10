@@ -1,5 +1,7 @@
+//!Contains the [Coords] struct.
 use crate::model::movement::Movement;
 
+/// Struct representing a point in a map's grid coordinate system.
 #[derive(Debug, PartialEq, Eq, Hash, Clone)]
 pub struct Coords {
     pub x: i32,
@@ -11,6 +13,9 @@ impl Coords {
         Self { x, y }
     }
 
+    /// Returns the coords that result from an entity performing a certain movement from the
+    /// original coords.
+    /// Up is considered negative y, and left negative x.
     pub fn do_movement(self, movement: &Movement) -> Coords {
         let x = self.x;
         let y = self.y;
@@ -22,7 +27,7 @@ impl Coords {
         }
     }
 
-    /// Returns the Manhattan distance between to points.
+    /// Returns the Manhattan distance between two points.
     /// ```
     /// use starlib::Coords;
     /// let c1 = Coords::new(1,1);

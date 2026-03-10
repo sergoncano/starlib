@@ -1,5 +1,9 @@
+//! Contains the [Sprite] struct and a helper function to create instances of it.
 use crate::Coords;
 
+/// Basic unit of rendering. Contains the (UTF-8) character that will be rendered and its z index.
+/// The greater the index, the higher the priority it will have when rendering multiple sprites in
+/// the same place.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Sprite {
     character: char,
@@ -58,15 +62,21 @@ impl Sprite {
         }
     }
 
+    /// Returns the sprite's z index.
     pub fn get_z_index(&self) -> i32 {
         self.z_index
     }
 
+    /// Returns the sprite's z charater.
     pub fn get_character(&self) -> char {
         self.character
     }
 }
 
+/// Returns a Vec<(Coords, Sprite)>, based on every appearance the character provided in the
+/// lines parameter. The sprite has the provided character and z index.
+/// Useful when you want to create a large amount of decorations in a map but don't want to do it
+/// manually.
 pub fn sprite_vector_from_lines(
     lines: &Vec<&str>,
     character: char,

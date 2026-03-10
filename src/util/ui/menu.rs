@@ -1,7 +1,10 @@
+//! Contains the [Menu] struct.
+
 use std::thread::sleep;
 
 use crate::{FRAME_DURATION, Input, renderer::centered_render, util::input::get_input};
 
+/// A menu with one or more options and a header. The header may be an empty string.
 pub struct Menu {
     header_text: String,
     options: Vec<String>,
@@ -10,6 +13,8 @@ pub struct Menu {
 }
 
 impl Menu {
+    /// Creates a title with the provided header and options. Panics if the options vector is
+    /// empty.
     pub fn build(header_text: String, options: Vec<String>) -> Menu {
         if options.is_empty() {
             panic!("Tried to create menu without options! Use title instead.");
@@ -28,6 +33,8 @@ impl Menu {
         }
     }
 
+    /// Shows the menu in the center of the screen and handles user input until they choose an
+    /// option. The return value is the index of the chosen option.
     pub fn prompt(&mut self) -> usize {
         crate::util::input::empty_event_queue();
         let n_options = &self.options.len();

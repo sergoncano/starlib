@@ -1,3 +1,5 @@
+//! Code related to the logic of the game.
+
 pub mod collider;
 pub mod coords;
 pub mod entity;

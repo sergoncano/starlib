@@ -23,10 +23,9 @@ pub(crate) fn get_level() -> Level<UserEvent> {
         "..@.........|.......",
     ];
     let decorations = sprite_vector_from_lines(&map_lines, '@', 3);
-    let colliders =
-        collider_vector_from_lines(&map_lines, '|', Collider::try_from("nsew").unwrap());
+    let colliders = collider_vector_from_lines(&map_lines, '|', Collider::build("nsew"));
     let map = Map::build(map_lines);
-    let stage = Stage::build(map, decorations, colliders);
+    let stage = Stage::new(map, decorations, colliders);
     Level::build(vec![stage], entities)
 }
 

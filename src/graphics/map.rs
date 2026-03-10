@@ -1,10 +1,25 @@
+//! Contains the [Map] struct.
+
 use crate::model::coords::Coords;
 
+/// The background of a stage. It's just a set of lines with associated methods.
 pub struct Map {
     pub(crate) lines: Vec<String>,
 }
 
 impl Map {
+    /// Creates a map out of its lines.
+    /// # Panics
+    /// Will panic if the map is not rectangular.
+    /// ```should_panic
+    /// use starlib::Map;
+    /// let lines = vec![
+    /// ".",
+    /// "...",
+    /// ".....",
+    /// ];
+    /// Map::build(lines);
+    /// ```
     pub fn build(lines: Vec<&'static str>) -> Self {
         let res = Self {
             lines: lines.iter().map(|&s| String::from(s)).collect(),
@@ -18,6 +33,7 @@ impl Map {
         Self::build(vec!["..@", "..|", "o.."])
     }
 
+    /// Returns the dimensions of the map in a Coordinate format.
     pub fn get_size(&self) -> Coords {
         let x = self.lines[0].len();
         let y = self.lines.len();

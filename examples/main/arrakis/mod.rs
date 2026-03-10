@@ -50,7 +50,7 @@ fn get_first_stage() -> Stage {
         colliders.extend(collider_vector_from_lines(
             &overlay_lines,
             c,
-            Collider::try_from("nsew").unwrap(),
+            Collider::build("nsew"),
         ));
         decorations.extend(sprite_vector_from_lines(&overlay_lines, c, 3));
     }
@@ -64,16 +64,16 @@ fn get_first_stage() -> Stage {
     colliders.extend(collider_vector_from_lines(
         &map_lines,
         '|',
-        Collider::try_from("nse-").unwrap(),
+        Collider::build("nse-"),
     ));
     colliders.extend(collider_vector_from_lines(
         &map_lines,
         '_',
-        Collider::try_from("--e-").unwrap(),
+        Collider::build("--e-"),
     ));
     let map = Map::build(map_lines);
-    colliders.push((ELDER_COORDS, Collider::try_from("nsew").unwrap()));
-    Stage::build(map, decorations, colliders)
+    colliders.push((ELDER_COORDS, Collider::build("nsew")));
+    Stage::new(map, decorations, colliders)
 }
 
 fn get_second_stage() -> Stage {
@@ -91,7 +91,7 @@ fn get_second_stage() -> Stage {
         colliders.extend(collider_vector_from_lines(
             &overlay_lines,
             rock_char,
-            Collider::try_from("nsew").unwrap(),
+            Collider::build("nsew"),
         ));
         decorations.extend(sprite_vector_from_lines(&overlay_lines, rock_char, 3));
     }
@@ -102,7 +102,7 @@ fn get_second_stage() -> Stage {
         "........................................................................................................................",
         "........................................................................................................................",
     ];
-    Stage::build(Map::build(map_lines), decorations, colliders)
+    Stage::new(Map::build(map_lines), decorations, colliders)
 }
 
 fn get_third_stage() -> Stage {
@@ -120,7 +120,7 @@ fn get_third_stage() -> Stage {
         colliders.extend(collider_vector_from_lines(
             &overlay_lines,
             rock_char,
-            Collider::try_from("nsew").unwrap(),
+            Collider::build("nsew"),
         ));
         decorations.extend(sprite_vector_from_lines(&overlay_lines, rock_char, 3));
     }
@@ -131,7 +131,7 @@ fn get_third_stage() -> Stage {
         "....................................................................................................,,,,,,,,,,,,,,,,,,,,",
         ".....................................................................................................,,,,,,,,,,,,,,,,,,,",
     ];
-    Stage::build(Map::build(map_lines), decorations, colliders)
+    Stage::new(Map::build(map_lines), decorations, colliders)
 }
 
 pub(crate) fn get_title() -> Title {

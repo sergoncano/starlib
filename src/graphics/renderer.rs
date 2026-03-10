@@ -1,3 +1,5 @@
+//! Contains a few utility functions related to rendering.
+//! [setup_terminal_properties] is a must for (input)[crate::util::input]'s methods to work.
 use std::{collections::HashMap, thread::sleep, time::Duration};
 
 use crate::{
@@ -74,12 +76,17 @@ pub(crate) fn centered_render(text: &Vec<String>, tip: Option<Tip>) {
     }
 }
 
+/// Clears the screen using crossterm's command and moves the cursor to (0,0)
 pub fn clear_screen() {
     let mut stdout = std::io::stdout();
     let _ = execute!(stdout, Clear(crossterm::terminal::ClearType::All));
     let _ = execute!(stdout, MoveTo(0, 0));
 }
 
+/// Enters alternate terminal, hides the cursor and enables raw mode.
+/// Note that basically nothing in [input](crate::util::input) will work
+/// if these properties aren't setup. Raw mode sends input byte-by-byte instead of
+/// in buffers, which is crucial for both menus and levels.
 pub fn setup_terminal_properties() {
     use crossterm::{cursor, execute, terminal::EnterAlternateScreen};
     let mut stdout = std::io::stdout();
@@ -89,6 +96,7 @@ pub fn setup_terminal_properties() {
     let _ = enable_raw_mode();
 }
 
+/// Undoes all changes [setup_terminal_properties] does.
 pub fn restore_terminal_properties() {
     use crossterm::{execute, terminal::LeaveAlternateScreen};
     let mut stdout = std::io::stdout();
