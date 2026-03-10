@@ -53,10 +53,11 @@ pub(crate) fn centered_render(text: &Vec<String>, tip: Option<Tip>) {
     loop {
         clear_screen();
         let min_height = text.len();
+        let min_width = text.iter().fold(0, |a, b| if a>b.len() {a} else {b.len()});
         let (w, h) = crossterm::terminal::size().unwrap_or((0, 0));
         width = w as usize;
         height = h as usize;
-        if height < min_height {
+        if height < min_height || width < min_width {
             println!("Enlarge your terminal!");
             sleep(Duration::from_secs(1));
         } else {
