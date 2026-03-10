@@ -1,6 +1,6 @@
 [package]
 name = "starlib"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Sergio González"]
 description = "A 2D grid-based TUI game engine"
 repository = "https://github.com/sergoncano/starlib"
